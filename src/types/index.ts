@@ -6,5 +6,5 @@
  */
 
 // Re-export semua type dari masing-masing file
-export type { Project, ProjectId } from "./project";
-export type { PropertyUnit, UnitStatus } from "./property";
+export type { Project, ProjectId, ProjectLocation } from "./project";
+export type { PropertyUnit, UnitStatus, SitePlanPosition, InterestFormData } from "./property";

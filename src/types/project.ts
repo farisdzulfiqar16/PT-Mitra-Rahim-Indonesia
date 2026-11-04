@@ -28,6 +28,9 @@ export interface Project {
   /** Slug untuk URL, misal: "dehir" → /projects/dehir */
   slug: string;
 
+  /** Status proyek: aktif atau coming soon */
+  status: "active" | "coming-soon";
+
   /** Lokasi geografis proyek */
   location: ProjectLocation;
 }
