@@ -1,16 +1,63 @@
 /**
  * Homepage Celestia — landing page pemasaran.
+ *
+ * Layout dikontrol oleh uiConfig.uiVariant di src/config/site.ts:
+ *   "v1" → layout awal (centered hero, card grid)
+ *   "v2" → layout baru (left-aligned hero, dotted bg, nav with WA CTA)
+ *
+ * Untuk undo ke V1: ubah uiConfig.uiVariant = "v1"
+ * Untuk redo ke V2: ubah uiConfig.uiVariant = "v2"
  */
 
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import Link from "next/link";
-import { siteConfig } from "@/config/site";
+import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { HomepageV2 } from "@/components/homepage/HomepageV2";
 import dehirData from "@/data/projects/dehir.json";
 import pabuaranData from "@/data/projects/pabuaran.json";
 import type { Project } from "@/types";
+
+/** OG locale mapping: Next.js menggunakan format en_US / id_ID */
+const OG_LOCALE: Record<string, string> = {
+  id: "id_ID",
+  en: "en_US",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+
+  const title = t("homepageTitle");
+  const description = t("homepageDescription");
+  const alternates = buildAlternates("/", locale);
+  const ogLocale = OG_LOCALE[locale] ?? "id_ID";
+
+  return {
+    title: { absolute: title },
+    description,
+    alternates: alternates ?? undefined,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: ogLocale,
+      siteName: siteConfig.name,
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function HomePage({
   params,
@@ -23,10 +70,41 @@ export default async function HomePage({
   const t = await getTranslations("homepage");
   const tCta = await getTranslations("cta");
   const tStatus = await getTranslations("status");
+  const tWa = await getTranslations("whatsapp");
 
   const dehir = dehirData as Project;
   const pabuaran = pabuaranData as Project;
 
+  // ── V2 Layout ──────────────────────────────────────────────────────────
+  if (uiConfig.uiVariant === "v2") {
+    return (
+      <HomepageV2
+        locale={locale}
+        dehir={dehir}
+        pabuaran={pabuaran}
+        t={{
+          heroHeadline: locale === "en"
+            ? "Houses and plots from Celestia, complete with unit information."
+            : "Rumah dan kavling dari Celestia, lengkap dengan informasi unitnya.",
+          heroSub: locale === "en"
+            ? "Find your ideal property. All information is transparent — from location, plot details, to WhatsApp contact."
+            : "Temukan properti idealmu. Semua informasi transparan — dari lokasi, detail kavling, hingga kontak WhatsApp.",
+          ctaExplore: tCta("exploreProjects"),
+          ctaWhatsApp: locale === "en" ? "Tanya Marketing" : "Tanya Marketing",
+          ctaWhatsAppDisabled: tWa("disabled"),
+          pickProject: locale === "en" ? "Pick a project" : "Pilih proyek",
+          projectActive: tStatus("available"),
+          projectComingSoon: tStatus("comingSoon"),
+          viewDetail: tCta("viewDetail"),
+          viewInfo: tCta("getInfo"),
+          galleryTitle: t("galleryTitle"),
+          videoTitle: t("videoTitle"),
+        }}
+      />
+    );
+  }
+
+  // ── V1 Layout (fallback) ───────────────────────────────────────────────
   return (
     <div className="flex flex-col">
       {/* Hero Section */}

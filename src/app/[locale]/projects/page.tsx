@@ -2,14 +2,53 @@
  * Katalog Proyek — menampilkan daftar semua proyek.
  */
 
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import Link from "next/link";
+import { buildAlternates, uiConfig } from "@/config/site";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { ProjectCatalogV2 } from "@/components/projects/ProjectCatalogV2";
 import dehirData from "@/data/projects/dehir.json";
 import pabuaranData from "@/data/projects/pabuaran.json";
 import type { Project } from "@/types";
+
+const OG_LOCALE: Record<string, string> = {
+  id: "id_ID",
+  en: "en_US",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+
+  const title = t("projectsTitle");
+  const description = t("projectsDescription");
+  const alternates = buildAlternates("/projects", locale);
+  const ogLocale = OG_LOCALE[locale] ?? "id_ID";
+
+  return {
+    title,
+    description,
+    alternates: alternates ?? undefined,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: ogLocale,
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function ProjectsPage({
   params,
@@ -19,23 +58,45 @@ export default async function ProjectsPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const t = await getTranslations("nav");
+  const tNav = await getTranslations("nav");
   const tStatus = await getTranslations("status");
+  const tCta = await getTranslations("cta");
 
   const dehir = dehirData as Project;
   const pabuaran = pabuaranData as Project;
   const activeCount = 1;
 
+  // ── V2 ─────────────────────────────────────────────────────────────────
+  if (uiConfig.uiVariant === "v2") {
+    return (
+      <ProjectCatalogV2
+        locale={locale}
+        dehir={dehir}
+        pabuaran={pabuaran}
+        labels={{
+          home: tNav("home"),
+          projects: tNav("projects"),
+          available: tStatus("available"),
+          comingSoon: tStatus("comingSoon"),
+          viewDetail: tCta("viewDetail"),
+          viewInfo: tCta("getInfo"),
+          activeCount: `${activeCount} ${locale === "en" ? "active project" : "proyek aktif"}`,
+        }}
+      />
+    );
+  }
+
+  // ── V1 fallback ─────────────────────────────────────────────────────────
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
       <nav className="mb-6 text-sm text-neutral-400" aria-label="Breadcrumb">
-        <Link href={`/${locale}`} className="hover:text-primary-700">{t("home")}</Link>
+        <Link href={`/${locale}`} className="hover:text-primary-700">{tNav("home")}</Link>
         <span className="mx-2">›</span>
-        <span className="text-neutral-600">{t("projects")}</span>
+        <span className="text-neutral-600">{tNav("projects")}</span>
       </nav>
 
-      <h1 className="mb-2 text-2xl font-bold text-neutral-900">{t("projects")}</h1>
+      <h1 className="mb-2 text-2xl font-bold text-neutral-900">{tNav("projects")}</h1>
       <p className="mb-6 text-sm text-neutral-500">{activeCount} proyek aktif</p>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

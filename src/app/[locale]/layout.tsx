@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "../globals.css";
-import { siteConfig } from "@/config/site";
+import { siteConfig, seoConfig } from "@/config/site";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -30,6 +30,20 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.tagline,
+  /**
+   * metadataBase: hanya ditetapkan jika siteUrl sudah dikonfirmasi.
+   * Jika kosong, Next.js tidak mengeluarkan URL absolut untuk canonical/og:url.
+   */
+  ...(seoConfig.siteUrl
+    ? { metadataBase: new URL(seoConfig.siteUrl) }
+    : {}),
+  /**
+   * Robots: noindex, nofollow selama prototype.
+   * Aktifkan indexing hanya setelah domain dan konten dikonfirmasi perusahaan.
+   */
+  robots: seoConfig.indexingEnabled
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
 /**

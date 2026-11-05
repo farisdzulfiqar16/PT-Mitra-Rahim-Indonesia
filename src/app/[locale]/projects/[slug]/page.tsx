@@ -2,23 +2,97 @@
  * Halaman Eksplorasi Proyek — Sidebar + Maps + Site Plan dalam satu halaman.
  */
 
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { SitePlanPanel } from "@/features/site-plan/SitePlanPanel";
+import { ExplorationV2 } from "@/components/projects/ExplorationV2";
 import dehirData from "@/data/projects/dehir.json";
 import pabuaranData from "@/data/projects/pabuaran.json";
 import dehirUnitsData from "@/data/properties/dehir-units.json";
 import type { Project, PropertyUnit } from "@/types";
 
-export default async function ExplorationPage({
+/**
+ * Apakah denah resmi Dehir sudah tersedia dan dikonfirmasi perusahaan.
+ * Ubah menjadi true hanya setelah:
+ *   1. Aset SVG denah resmi ada di public/site-plan/dehir.svg
+ *   2. Data posisi unit dikonfirmasi di src/data/properties/dehir-site-plan.json
+ */
+const SITE_PLAN_AVAILABLE = false;
+
+/** OG locale mapping */
+const OG_LOCALE: Record<string, string> = {
+  id: "id_ID",
+  en: "en_US",
+};
+
+/** Generate static params untuk semua kombinasi locale × slug */
+export function generateStaticParams() {
+  const allProjects = [dehirData, pabuaranData] as Project[];
+  const slugs = allProjects.map((p) => p.slug);
+  const locales = ["id", "en"];
+  return locales.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug }))
+  );
+}
+
+export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+
+  // Cari proyek; jika tidak ditemukan, metadata minimal saja — notFound() tetap di page
+  const allProjects = [dehirData, pabuaranData] as Project[];
+  const project = allProjects.find((p) => p.slug === slug);
+  if (!project) return {};
+
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const ogLocale = OG_LOCALE[locale] ?? "id_ID";
+
+  const title = t("explorationTitle")
+    .replace("{projectName}", project.fullName);
+  const description = t("explorationDescription")
+    .replace("{projectName}", project.fullName)
+    .replace("{city}", project.location.city)
+    .replace("{province}", project.location.province);
+
+  const alternates = buildAlternates(`/projects/${slug}`, locale);
+
+  return {
+    title,
+    description,
+    alternates: alternates ?? undefined,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: ogLocale,
+      siteName: siteConfig.name,
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
+
+export default async function ExplorationPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ unit?: string }>;
 }) {
   const { locale, slug } = await params;
+  const { unit: highlightedUnitCode } = await searchParams;
   setRequestLocale(locale);
 
   const tNav = await getTranslations("nav");
@@ -27,6 +101,7 @@ export default async function ExplorationPage({
   const tCta = await getTranslations("cta");
   const tComingSoon = await getTranslations("comingSoon");
   const tStatus = await getTranslations("status");
+  const tSitePlan = await getTranslations("sitePlan");
 
   // Cari proyek berdasarkan slug
   const allProjects = [dehirData, pabuaranData] as Project[];
@@ -50,6 +125,42 @@ export default async function ExplorationPage({
   // Dehir — full exploration page
   const units = dehirUnitsData as PropertyUnit[];
 
+  // ── V2 ─────────────────────────────────────────────────────────────────
+  if (uiConfig.uiVariant === "v2") {
+    return (
+      <ExplorationV2
+        locale={locale}
+        project={project}
+        units={units}
+        highlightedUnitCode={highlightedUnitCode}
+        sitePlanAvailable={SITE_PLAN_AVAILABLE}
+        labels={{
+          home: tNav("home"),
+          projects: tNav("projects"),
+          available: tStatus("available"),
+          process: tStatus("process"),
+          sold: tStatus("sold"),
+          unknown: tStatus("unknown"),
+          comingSoon: tStatus("comingSoon"),
+          viewDetail: tCta("viewDetail"),
+          viewUnits: tCta("viewUnits"),
+          viewSitePlan: tProject("viewSitePlan"),
+          sitePlanPlaceholder: tEmpty("sitePlanPlaceholder"),
+          sitePlanPlaceholderDesc: tEmpty("sitePlanPlaceholderDesc"),
+          unitListTitle: tSitePlan("unitListTitle"),
+          unitNotOnPlanNote: tSitePlan("unitNotOnPlanNote"),
+          unitSummary: tProject("unitSummary"),
+          statusNotConfirmed: tProject("statusNotConfirmed"),
+          contactWhatsApp: tCta("contactWhatsApp"),
+          waDisabled: (await getTranslations("whatsapp"))("disabled"),
+          filterAll: locale === "en" ? "All" : "Semua",
+          contactForPrice: (await getTranslations("unit"))("contactForPrice"),
+        }}
+      />
+    );
+  }
+
+  // ── V1 fallback ─────────────────────────────────────────────────────────
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
@@ -131,23 +242,26 @@ export default async function ExplorationPage({
             />
           </section>
 
-          {/* Site Plan placeholder */}
-          <section>
-            <h2 className="mb-3 text-lg font-semibold text-neutral-900">📐 {tProject("viewSitePlan")}</h2>
-            <Placeholder
-              type="site-plan"
-              label={tEmpty("sitePlanPlaceholder")}
-              description={tEmpty("sitePlanPlaceholderDesc")}
-            />
-            <div className="mt-3">
-              <Link
-                href={`/${locale}/projects/dehir/units`}
-                className="inline-flex items-center justify-center rounded-md border border-primary-300 bg-primary-50 px-6 py-3 text-sm font-medium text-primary-700 hover:bg-primary-100 transition-colors min-h-[44px]"
-              >
-                {tCta("viewUnits")}
-              </Link>
-            </div>
-          </section>
+          {/* Site Plan — via SitePlanPanel */}
+          <SitePlanPanel
+            isAvailable={SITE_PLAN_AVAILABLE}
+            units={units}
+            highlightedUnitCode={highlightedUnitCode}
+            title={tProject("viewSitePlan")}
+            placeholderLabel={tEmpty("sitePlanPlaceholder")}
+            placeholderDesc={tEmpty("sitePlanPlaceholderDesc")}
+            unitListTitle={tSitePlan("unitListTitle")}
+            unitNotOnPlanNote={tSitePlan("unitNotOnPlanNote")}
+            locale={locale}
+            projectSlug={project.slug}
+            statusLabels={{
+              available: tStatus("available"),
+              process: tStatus("process"),
+              sold: tStatus("sold"),
+              unknown: tStatus("unknown"),
+            }}
+            viewDetailLabel={tCta("viewDetail")}
+          />
 
           {/* Gallery */}
           <section>

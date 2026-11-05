@@ -2,15 +2,65 @@
  * Katalog Unit — menampilkan daftar unit dalam proyek terpilih.
  */
 
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { UnitCatalogV2 } from "@/components/projects/UnitCatalogV2";
 import dehirData from "@/data/projects/dehir.json";
 import pabuaranData from "@/data/projects/pabuaran.json";
 import dehirUnitsData from "@/data/properties/dehir-units.json";
 import type { Project, PropertyUnit, UnitStatus } from "@/types";
+
+/** OG locale mapping */
+const OG_LOCALE: Record<string, string> = {
+  id: "id_ID",
+  en: "en_US",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+
+  const allProjects = [dehirData, pabuaranData] as Project[];
+  const project = allProjects.find((p) => p.slug === slug);
+  if (!project || project.status !== "active") return {};
+
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const ogLocale = OG_LOCALE[locale] ?? "id_ID";
+
+  const title = t("unitCatalogTitle")
+    .replace("{projectName}", project.fullName);
+  const description = t("unitCatalogDescription")
+    .replace("{projectName}", project.fullName)
+    .replace("{city}", project.location.city);
+
+  const alternates = buildAlternates(`/projects/${slug}/units`, locale);
+
+  return {
+    title,
+    description,
+    alternates: alternates ?? undefined,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: ogLocale,
+      siteName: siteConfig.name,
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function UnitCatalogPage({
   params,
@@ -24,6 +74,8 @@ export default async function UnitCatalogPage({
   const tUnit = await getTranslations("unit");
   const tStatus = await getTranslations("status");
   const tEmpty = await getTranslations("empty");
+  const tCta = await getTranslations("cta");
+  const tWa = await getTranslations("whatsapp");
 
   const allProjects = [dehirData, pabuaranData] as Project[];
   const project = allProjects.find((p) => p.slug === slug);
@@ -34,6 +86,32 @@ export default async function UnitCatalogPage({
 
   const units = dehirUnitsData as PropertyUnit[];
 
+  // ── V2 ─────────────────────────────────────────────────────────────────
+  if (uiConfig.uiVariant === "v2") {
+    return (
+      <UnitCatalogV2
+        locale={locale}
+        project={project}
+        units={units}
+        labels={{
+          home: tNav("home"),
+          projects: tNav("projects"),
+          available: tStatus("available"),
+          process: tStatus("process"),
+          sold: tStatus("sold"),
+          unknown: tStatus("unknown"),
+          noUnits: tEmpty("noUnits"),
+          viewDetail: tCta("viewDetail"),
+          contactForPrice: tUnit("contactForPrice"),
+          contactWhatsApp: tCta("contactWhatsApp"),
+          waDisabled: tWa("disabled"),
+          filterAll: locale === "en" ? "All" : "Semua",
+        }}
+      />
+    );
+  }
+
+  // ── V1 fallback ─────────────────────────────────────────────────────────
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
@@ -53,7 +131,6 @@ export default async function UnitCatalogPage({
         <p className="mt-1 text-sm text-neutral-500">{project.location.city}, {project.location.province}</p>
       </div>
 
-      {/* Unit grid */}
       {units.length === 0 ? (
         <p className="py-8 text-center text-sm text-neutral-400">{tEmpty("noUnits")}</p>
       ) : (
@@ -77,7 +154,6 @@ export default async function UnitCatalogPage({
                   </Badge>
                 </div>
                 <p className="text-sm text-neutral-500">{unit.unitType}</p>
-                {/* Price: unknown for all units at this stage */}
                 <p className="mt-2 text-sm font-medium text-primary-700">{tUnit("contactForPrice")}</p>
               </div>
             </Card>
