@@ -1,130 +1,164 @@
 # Celestia — Property Exploration & Marketing Website
 
-A web-based property exploration and marketing platform designed to help prospective buyers discover residential projects, explore available property information, and connect directly with the marketing team.
+Website pemasaran properti untuk PT Mitra Rahim Indonesia. Calon pembeli dapat menjelajahi proyek properti, melihat informasi unit dan kavling, serta menghubungi tim marketing melalui WhatsApp.
 
-> **Project Status:** In Development  
-> **Repository Visibility:** Private  
+> **Project Status:** Prototype aktif — belum di-deploy ke domain publik
+> **Repository Visibility:** Private
 > **Project Type:** Real-world Internship Project
 
-## Overview
+---
 
-Celestia is a property marketing website developed to improve how prospective buyers discover and explore residential property offerings.
+## Quick Start
 
-The platform focuses on presenting property projects through promotional content, location information, property details, and visual exploration. It aims to provide a more accessible experience for prospective buyers while simplifying the initial inquiry process.
+```bash
+# 1. Install dependencies
+npm install
 
-Rather than handling transactions directly, Celestia connects interested visitors with the property's marketing team through WhatsApp.
+# 2. Jalankan development server
+npm run dev
+```
 
-## Project Objectives
+Buka browser di **http://localhost:3000** — akan diarahkan otomatis ke `/id/`.
 
-- Provide a centralized digital platform for property promotion.
-- Present residential projects and their key information clearly.
-- Help visitors explore property locations and available units.
-- Improve the presentation of property layouts and visual assets.
-- Simplify prospective buyer inquiries through WhatsApp integration.
-- Establish a maintainable foundation for future content and feature expansion.
+Untuk pemeriksaan kualitas kode sebelum commit:
 
-## Planned MVP Features
+```bash
+npm run lint          # ESLint
+npx tsc --noEmit      # TypeScript check
+npm run build         # Production build
+```
 
-The initial release is focused on the following capabilities:
+Lihat [`docs/DEVELOPMENT-GUIDE.md`](docs/DEVELOPMENT-GUIDE.md) untuk panduan lengkap.
 
-| Feature | Description | Status |
+---
+
+## Gambaran Proyek
+
+Celestia adalah **Property Exploration & Marketing Website**, bukan platform transaksi atau marketplace properti. Pengunjung dapat:
+
+1. Menemukan proyek properti yang ditawarkan
+2. Menjelajahi lokasi dan informasi unit/kavling
+3. Melihat detail unit yang tersedia
+4. Menghubungi tim marketing melalui WhatsApp
+
+Website **tidak** menangani booking, pembayaran, login pengguna, atau operasi backend apapun.
+
+---
+
+## Status Fitur MVP
+
+| Fitur | Status | Catatan |
 |---|---|---|
-| Promotional Landing Page | Introduces the Celestia brand, projects, and property offerings. | Planned |
-| Project Catalog | Presents available residential projects. | Planned |
-| Project Exploration | Combines project information, geographic location, and site plan exploration. | Planned |
-| Property Unit Information | Displays available unit details and relevant specifications. | Planned |
-| Interactive Site Plan | Allows visitors to explore unit positions and status when official data is available. | Planned |
-| Visual Media Gallery | Supports property images, videos, and promotional media. | Planned |
-| Interest Form | Collects prospective buyers' property preferences. | Planned |
-| WhatsApp Integration | Transfers inquiry details to the marketing team through WhatsApp. | Planned |
-| Bilingual Interface | Supports Indonesian and English. | Planned |
+| Homepage (landing page promosi) | ✅ Implemented | Layout V1 & V2, data masih placeholder |
+| Katalog Proyek | ✅ Implemented | Dehir (aktif) + Pabuaran (coming soon) |
+| Halaman Eksplorasi Proyek | ✅ Implemented | Dengan daftar unit, sidebar, peta placeholder |
+| Katalog Unit | ✅ Implemented | 9 unit Dehir, semua status `unknown` saat ini |
+| Detail Unit | ✅ Implemented | Data minimal, foto masih placeholder |
+| Site Plan Interaktif | ⏳ Pending | Menunggu denah resmi dari perusahaan |
+| Formulir Minat | ❌ Not Implemented | Halaman `/interest` belum dibuat |
+| WhatsApp Integration | ⚠️ Partially Working | Logika tersedia; CTA dinonaktifkan karena nomor WA belum dikonfirmasi |
+| Bilingual (ID/EN) | ✅ Implemented | Routing `/id/` dan `/en/` aktif via `next-intl` |
+| Halaman 404 & Error Boundary | ✅ Implemented | Bilingual |
+| SEO Metadata & Sitemap | ✅ Implemented | Noindex/nofollow aktif selama prototype |
 
-Feature availability will depend on confirmed company information and approved project assets.
+### Hal yang masih menunggu konfirmasi perusahaan
 
-## Product Scope
+- Nomor WhatsApp marketing (saat ini placeholder — CTA dinonaktifkan otomatis)
+- Status, luas, dimensi, dan harga setiap kavling
+- Foto proyek dan unit
+- Denah/site plan resmi Dehir
+- Domain produksi (SEO canonical/hreflang belum aktif)
+- Logo Celestia resmi
 
-Celestia is designed as a **Property Exploration & Marketing Website**, not an online property marketplace or transactional platform.
-
-The primary visitor journey is:
-
-1. Discover a property project.
-2. Explore its location and available information.
-3. Review property types and unit details.
-4. Submit an inquiry or contact the marketing team.
-5. Continue consultation and purchasing discussions through WhatsApp.
-
-### Out of Scope for the Initial MVP
-
-- Online booking or unit reservation.
-- Unit locking.
-- Online payments and transactions.
-- Customer accounts and authentication.
-- CRM and lead management systems.
-- Real-time inventory synchronization.
-- Online negotiation.
-- Advanced 3D property visualization.
+---
 
 ## Technology Stack
 
-The current project foundation uses:
+| Teknologi | Versi | Keterangan |
+|---|---|---|
+| Next.js | 16.4.4 | App Router, Turbopack (build & dev) |
+| React | 19.3.0 | Server Components sebagai default |
+| TypeScript | ~5.x | Strict mode aktif |
+| Tailwind CSS | ~4.x | Konfigurasi via `@theme inline` di `globals.css` |
+| next-intl | ~4.x | Routing bilingual dan terjemahan |
 
-- **Framework:** Next.js 16
-- **UI Library:** React 19
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4
-- **Rendering Approach:** React Server Components by default
+Tidak ada database, backend, atau state management library. Data properti disimpan sebagai file JSON statis di `src/data/`.
 
-The implementation will prioritize simplicity, maintainability, and an appropriate level of complexity for the MVP.
+---
 
-## Data & Content Principles
+## Struktur Proyek (ringkas)
 
-Property information must be based on company-confirmed sources.
+```
+src/
+├── app/[locale]/           ← Routing bilingual (id/en)
+│   ├── page.tsx            ← Homepage
+│   ├── projects/           ← Katalog proyek & eksplorasi
+│   │   └── [slug]/units/   ← Katalog & detail unit
+│   ├── error.tsx           ← Error boundary
+│   └── not-found.tsx       ← Halaman 404
+├── components/
+│   ├── ui/                 ← Komponen dasar (Badge, Button, Card, dll.)
+│   ├── layout/             ← Navbar, Footer
+│   ├── homepage/           ← HomepageV2
+│   └── projects/           ← V2 layout components
+├── features/site-plan/     ← SitePlanPanel (placeholder aktif)
+├── config/site.ts          ← siteConfig, seoConfig, uiConfig
+├── data/                   ← File JSON data proyek dan unit
+├── i18n/messages/          ← Terjemahan ID & EN
+└── types/                  ← TypeScript interfaces
+```
 
-Key principles:
+---
 
-- Official company information is the source of truth for property specifications, pricing, location, and unit availability.
-- Unknown or unconfirmed information must not be presented as verified data.
-- Missing content may use clearly identified placeholders.
-- Official site plans and unit-position data are required before enabling interactive site plan functionality.
-- Promotional illustrations must not be misrepresented as official property plans.
-- Project information will be structured to support future content updates.
+## UI Variant (Feature Flag)
 
-## Development Approach
+Tampilan website dikontrol oleh `uiConfig.uiVariant` di `src/config/site.ts`:
 
-Development follows an iterative, scope-controlled workflow:
+```typescript
+// src/config/site.ts
+export const uiConfig = {
+  uiVariant: "v2" as "v1" | "v2",
+};
+```
 
-1. Requirements definition and validation.
-2. UX exploration and interface mockups.
-3. MVP implementation.
-4. Functional testing and review.
-5. Iterative improvements based on project feedback.
+- **`"v2"`** (default aktif) — Layout baru mengikuti mockup referensi
+- **`"v1"`** — Layout awal sebagai fallback
 
-The development process prioritizes essential visitor needs before introducing additional features.
+Untuk rollback ke V1: ubah `uiVariant: "v1"`. Tidak perlu mengubah file lain.
 
-## Project Development Status
+---
 
-The project is currently progressing through requirements finalization and product design preparation.
+## Prototype & Indexing
 
-| Development Stage | Status |
-|---|---|
-| Product concept | Defined |
-| Initial MVP scope | Defined |
-| Requirements documentation | In progress |
-| UX/UI mockups | Upcoming |
-| MVP implementation | Upcoming |
-| Testing and review | Upcoming |
-| Deployment | Pending |
+Website dalam mode prototype. Indexing search engine **dinonaktifkan secara eksplisit**:
+
+- `robots.txt` → `Allow: /` (crawler dapat membaca halaman)
+- Setiap halaman → `<meta name="robots" content="noindex, nofollow">`
+- Sitemap → kosong (tidak ada URL publik)
+
+Untuk mengaktifkan indexing setelah domain dan konten dikonfirmasi perusahaan, ubah `seoConfig` di `src/config/site.ts`. **Jangan aktifkan hanya karena build berhasil atau `NODE_ENV === "production"`.**
+
+---
+
+## Out of Scope (MVP)
+
+- Online booking atau reservasi unit
+- Pembayaran online
+- Login atau akun pengguna
+- Dashboard admin
+- CRM atau manajemen lead
+- Backend, database, atau API eksternal
+- Update data unit secara real-time
+
+---
 
 ## Project Notes
 
-This repository is maintained as part of a real-world internship project.
+Repository ini dikelola sebagai bagian dari proyek internship nyata. Informasi proyek, aset visual, dan data properti akan diperbarui setelah dikonfirmasi perusahaan.
 
-Project requirements, visual assets, property information, and implementation details may evolve as company requirements are clarified.
-
-The repository is private. Project materials and company-related information should be handled according to the organization's authorization and confidentiality requirements.
+Materi proyek dan informasi perusahaan harus ditangani sesuai ketentuan kerahasiaan organisasi.
 
 ---
 
 **Celestia Development**  
-Property Exploration & Marketing Website  
-*Built to make property discovery more accessible.*
+Property Exploration & Marketing Website — PT Mitra Rahim Indonesia
