@@ -5,74 +5,91 @@
 ```
 celestia-web/
 ├── docs/                      ← Dokumentasi developer (kamu sedang membacanya)
-├── public/                    ← File statis: gambar, ikon, font lokal
-│   └── *.svg                  ← Ikon default dari create-next-app (akan diganti)
+├── public/                    ← File statis: gambar, ikon
+│   └── *.svg                  ← Ikon bawaan create-next-app
+│   └── Hybrid 1 — *.png       ← Aset gambar proyek
 ├── src/
 │   ├── app/                   ← Routing Next.js App Router
+│   │   ├── [locale]/          ← Routing bilingual (/id/... dan /en/...)
+│   │   │   ├── layout.tsx     ← Root layout dengan locale provider
+│   │   │   ├── page.tsx       ← Homepage (/id/ dan /en/)
+│   │   │   ├── error.tsx      ← Error boundary per-locale
+│   │   │   ├── not-found.tsx  ← 404 per-locale
+│   │   │   └── projects/
+│   │   │       ├── page.tsx           ← Daftar semua proyek
+│   │   │       └── [slug]/
+│   │   │           ├── page.tsx       ← Detail proyek
+│   │   │           └── units/
+│   │   │               ├── page.tsx           ← Katalog unit proyek
+│   │   │               └── [unitCode]/
+│   │   │                   └── page.tsx       ← Detail unit
 │   │   ├── globals.css        ← CSS global + import Tailwind
-│   │   ├── layout.tsx         ← Root layout (HTML wrapper, metadata default)
-│   │   └── page.tsx           ← Halaman "/" (homepage placeholder)
+│   │   ├── not-found.tsx      ← 404 global (sebelum locale terdeteksi)
+│   │   ├── robots.ts          ← robots.txt dinamis
+│   │   └── sitemap.ts         ← sitemap.xml dinamis
+│   │
+│   ├── components/            ← Komponen UI (sementara, sebelum migrasi ke features/)
+│   │   ├── homepage/          ← HomepageV2.tsx
+│   │   ├── layout/            ← Navbar.tsx, Footer.tsx
+│   │   ├── projects/          ← ExplorationV2, ProjectCatalogV2, UnitCatalogV2, UnitDetailV2
+│   │   └── ui/                ← Badge, Button, Card, Input, Placeholder, Select
 │   │
 │   ├── config/                ← Konfigurasi global aplikasi
-│   │   └── site.ts            ← Nama, URL, kontak, locale
+│   │   └── site.ts            ← siteConfig, uiConfig, seoConfig, WhatsApp helpers
 │   │
-│   ├── lib/                   ← Utility functions yang digunakan banyak tempat
+│   ├── data/                  ← File JSON data properti
+│   │   ├── projects/
+│   │   │   ├── dehir.json
+│   │   │   └── pabuaran.json
+│   │   └── properties/
+│   │       └── dehir-units.json
+│   │
+│   ├── features/              ← Feature modules (sebagian belum diimplementasikan)
+│   │   └── site-plan/         ← SitePlanPanel.tsx, InteractiveSitePlan.tsx
+│   │
+│   ├── i18n/                  ← Konfigurasi dan file terjemahan next-intl
+│   │   ├── config.ts          ← Daftar locale yang didukung
+│   │   ├── request.ts         ← Request-scoped i18n config (untuk App Router)
+│   │   └── messages/
+│   │       ├── id.json        ← Terjemahan Bahasa Indonesia
+│   │       └── en.json        ← Terjemahan English
+│   │
+│   ├── lib/                   ← Utility functions
 │   │   └── utils.ts           ← cn(), formatRupiah(), formatArea()
 │   │
-│   └── types/                 ← TypeScript interfaces dan types
-│       ├── index.ts           ← Barrel export semua types
-│       ├── project.ts         ← Project, ProjectId, ProjectLocation
-│       └── property.ts        ← PropertyUnit, UnitStatus
+│   ├── types/                 ← TypeScript interfaces dan types
+│   │   ├── index.ts           ← Barrel export semua types
+│   │   ├── project.ts         ← Project, ProjectId, ProjectLocation
+│   │   └── property.ts        ← PropertyUnit, UnitStatus
+│   │
+│   └── proxy.ts               ← Middleware next-intl untuk locale routing
 │
 ├── .env.local.example         ← Template environment variables
-├── .gitignore                 ← File yang diabaikan Git
+├── .gitignore
 ├── eslint.config.mjs          ← Konfigurasi ESLint
-├── next.config.ts             ← Konfigurasi Next.js
+├── next.config.ts             ← Konfigurasi Next.js (Turbopack + next-intl plugin)
 ├── package.json               ← Dependencies dan npm scripts
 └── tsconfig.json              ← Konfigurasi TypeScript (strict mode aktif)
 ```
 
-## Folder yang Akan Dibuat pada Feature Spec Berikutnya
+## Folder yang Belum Diimplementasikan (Planned)
+
+Berikut folder yang ada dalam rencana arsitektur tapi belum dibuat:
 
 ```
 src/
-├── app/
-│   └── [locale]/              ← Routing bilingual (i18n)
-│       ├── layout.tsx
-│       ├── page.tsx           ← Homepage Celestia
-│       ├── projects/
-│       │   └── [slug]/
-│       │       └── page.tsx   ← Halaman detail proyek
-│       └── properties/
-│           └── [unitCode]/
-│               └── page.tsx   ← Halaman detail unit
-│
-├── components/
-│   ├── ui/                    ← Komponen UI dasar (Button, Card, Badge)
-│   ├── layout/                ← Navbar, Footer
-│   └── shared/                ← Komponen yang digunakan di banyak fitur
-│
 ├── features/
-│   ├── projects/              ← ProjectCard, ProjectList, ProjectHero
-│   ├── properties/            ← PropertyCatalog, UnitCard, UnitDetail
-│   ├── site-plan/             ← InteractiveSitePlan, ZoomableMap
-│   └── contact/               ← WhatsAppButton, ContactCTA
+│   ├── projects/    ← ProjectCard, ProjectList, ProjectHero (planned)
+│   ├── properties/  ← PropertyCatalog, UnitCard, UnitDetail (planned)
+│   └── contact/     ← WhatsAppButton, ContactCTA (planned)
 │
 ├── services/
-│   ├── projects.ts            ← getAllProjects(), getProjectBySlug()
-│   └── properties.ts          ← getUnitsByProject(), getUnitByCode()
+│   ├── projects.ts  ← getAllProjects(), getProjectBySlug() (planned)
+│   └── properties.ts ← getUnitsByProject(), getUnitByCode() (planned)
 │
-├── data/                      ← File JSON data properti (dikonfirmasi perusahaan)
-│   ├── projects/
-│   │   ├── dehir.json
-│   │   └── pabuaran.json
-│   └── properties/
-│       ├── dehir-units.json
-│       └── pabuaran-units.json
-│
-└── i18n/                      ← File terjemahan
-    ├── id.json                ← Bahasa Indonesia
-    └── en.json                ← English
+└── data/
+    └── properties/
+        └── pabuaran-units.json  ← Data unit Pabuaran (belum tersedia)
 ```
 
 ## Konvensi Penamaan

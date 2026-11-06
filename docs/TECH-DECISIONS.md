@@ -34,6 +34,28 @@ dipertimbangkan. Tujuannya agar developer baru memahami "mengapa" di balik pilih
 
 ---
 
+### Implementasi i18n (Bilingual)
+
+**Keputusan:** Menggunakan `next-intl` untuk bilingual (Bahasa Indonesia + English).
+
+**Alasan:**
+- Integrasi native dengan App Router Next.js.
+- Dukungan middleware routing berdasarkan locale.
+- Komunitas aktif dan dokumentasi lengkap.
+
+**Keputusan turunan yang sudah diterapkan:**
+- Struktur URL: `/id/...` dan `/en/...` (keduanya dengan prefix eksplisit).
+- File terjemahan disimpan di `src/i18n/messages/id.json` dan `en.json`.
+- Slug URL tidak diterjemahkan — slug tetap sama di semua locale.
+- Routing middleware dikonfigurasi di `src/proxy.ts`.
+- Konfigurasi locale di `src/i18n/config.ts` dan `src/i18n/request.ts`.
+
+**Bukti implementasi:** `package.json` dependency `"next-intl": "^4.14.9"`,
+`next.config.ts` menggunakan `createNextIntlPlugin`, folder `src/i18n/` aktif,
+routing `src/app/[locale]/` berjalan.
+
+---
+
 ### Tailwind CSS v4
 
 **Keputusan:** Menggunakan Tailwind CSS v4.
@@ -45,6 +67,24 @@ dipertimbangkan. Tujuannya agar developer baru memahami "mengapa" di balik pilih
 
 **Catatan:** Tailwind v4 memiliki perbedaan konfigurasi dibanding v3. Tidak ada file `tailwind.config.js`
 — konfigurasi dilakukan via CSS.
+
+---
+
+### Turbopack
+
+**Keputusan:** Turbopack digunakan sebagai bundler untuk dev dan build.
+
+**Konteks keputusan:** Awalnya ditolak (`--no-turbopack`) demi stabilitas. Keputusan berubah
+saat Tailwind CSS v4 membutuhkan loader khusus. `@tailwindcss/turbopack` adalah paket resmi
+dari Tailwind yang hanya bekerja dengan Turbopack, bukan Webpack. Karena proyek sudah
+berkomitmen ke Tailwind v4, menggunakan Turbopack menjadi keharusan teknis.
+
+**Kondisi aktual:** `next.config.ts` mengaktifkan Turbopack via blok `turbopack.rules`
+untuk memproses file CSS dengan `@tailwindcss/turbopack`. Dev server (`next dev`) dan
+build (`next build`) keduanya menggunakan Turbopack.
+
+**Bukti implementasi:** `next.config.ts` blok `turbopack: { rules: { "*.css": ... } }`,
+`package.json` devDependency `"@tailwindcss/turbopack": "^4"`.
 
 ---
 
@@ -65,24 +105,6 @@ ganti services layer agar membaca dari API. Komponen UI tidak perlu berubah.
 ---
 
 ## 🔄 Keputusan yang Masih Terbuka
-
-### Implementasi i18n (Bilingual)
-
-**Pertanyaan:** Library apa yang digunakan untuk bilingual?
-
-**Kandidat:**
-- `next-intl` — integrasi bagus dengan App Router, dukungan komunitas kuat
-- `next-i18next` — lebih umum, tapi lebih cocok untuk Pages Router
-- Implementasi manual — terlalu banyak boilerplate
-
-**Rekomendasi:** `next-intl` — evaluasi lebih lanjut saat Feature Spec i18n disiapkan.
-
-**Yang perlu diputuskan:**
-- Struktur URL: `/id/...` dan `/en/...` atau path tanpa prefix untuk bahasa default?
-- Di mana menyimpan file terjemahan?
-- Apakah slug URL juga diterjemahkan?
-
----
 
 ### Google Maps vs Alternatif
 
@@ -111,15 +133,6 @@ ganti services layer agar membaca dari API. Komponen UI tidak perlu berubah.
 ---
 
 ## ❌ Keputusan yang Ditolak
-
-### Turbopack
-
-**Ditolak karena:** `--no-turbopack` dipilih untuk stabilitas.
-Turbopack masih dalam pengembangan aktif. Webpack lebih stabil untuk production.
-
-Bisa diaktifkan nanti dengan `npm run dev -- --turbopack` jika ingin dicoba.
-
----
 
 ### Backend / Database
 

@@ -39,24 +39,37 @@ Tambahkan `"use client"` hanya jika memang diperlukan.
 
 Kode diorganisir berdasarkan fitur bisnis, bukan berdasarkan jenis file.
 
+**Sudah diimplementasikan:**
 ```
 src/features/
-  projects/     ← Semua kode terkait daftar dan detail proyek
-  properties/   ← Semua kode terkait katalog dan detail unit
-  site-plan/    ← Semua kode terkait denah interaktif
-  contact/      ← Semua kode terkait CTA dan kontak WhatsApp
+  site-plan/    ← Denah interaktif (SitePlanPanel, InteractiveSitePlan)
 ```
 
-### 3. Data Access Layer
+**Direncanakan (belum ada):**
+```
+src/features/
+  projects/     ← ProjectCard, ProjectList, ProjectHero (planned)
+  properties/   ← PropertyCatalog, UnitCard, UnitDetail (planned)
+  contact/      ← WhatsAppButton, ContactCTA (planned)
+```
 
-Komponen UI tidak boleh membaca file data secara langsung.
+Komponen halaman saat ini berada di `src/components/` (homepage, projects, ui, layout)
+sambil menunggu migrasi ke struktur feature-based.
+
+### 3. Data Access Layer (Direncanakan)
+
+Rencana arsitektur: komponen UI tidak boleh membaca file data secara langsung.
 Gunakan services di `src/services/` sebagai perantara.
 
 ```
 src/services/
-  projects.ts   ← getProject(), getAllProjects()
-  properties.ts ← getUnit(), getUnitsByProject()
+  projects.ts   ← getProject(), getAllProjects()     (planned)
+  properties.ts ← getUnit(), getUnitsByProject()     (planned)
 ```
+
+**Status aktual:** `src/services/` belum diimplementasikan. Semua halaman saat ini
+mengimpor data JSON secara langsung dari `src/data/`. Services layer adalah arsitektur
+target yang memungkinkan migrasi ke API tanpa mengubah komponen UI.
 
 ### 4. Type Safety
 
@@ -65,16 +78,12 @@ Tidak ada `any` tanpa alasan yang sangat kuat dan komentar jelas.
 
 ---
 
-## Alur Data (MVP)
+## Alur Data (MVP — Kondisi Aktual)
 
 ```
-File JSON / Data Statis
+File JSON di src/data/
         ↓
-  src/services/        (data access layer)
-        ↓
-  src/features/        (business logic)
-        ↓
-  src/app/             (routing & pages)
+  src/app/[locale]/    (halaman mengimpor JSON langsung)
         ↓
   Browser (Server Components dirender di server)
 ```
@@ -84,19 +93,47 @@ Data statis dipilih untuk MVP karena:
 - Mudah diubah dan dikelola
 - Dapat diganti dengan API di masa depan tanpa mengubah komponen UI
 
+**Arsitektur yang direncanakan** (belum diimplementasikan):
+```
+File JSON / API
+        ↓
+  src/services/        (data access layer — planned)
+        ↓
+  src/features/        (business logic — partially planned)
+        ↓
+  src/app/[locale]/    (routing & pages)
+        ↓
+  Browser
+```
+
 ---
 
 ## Bilingual (i18n)
 
 Website mendukung **Bahasa Indonesia** (default) dan **English**.
 
-Implementasi i18n dijadwalkan pada Feature Spec berikutnya.
-Kandidat library: `next-intl` (evaluasi lebih lanjut diperlukan).
+Implementasi menggunakan `next-intl` (`^4.14.9`) dan sudah berjalan aktif:
+- Routing berbasis locale: `/id/...` dan `/en/...`
+- Middleware di `src/proxy.ts` menangani deteksi dan redirect locale
+- Konfigurasi di `src/i18n/config.ts` dan `src/i18n/request.ts`
+- File terjemahan di `src/i18n/messages/id.json` dan `src/i18n/messages/en.json`
+- Semua halaman berada di bawah `src/app/[locale]/`
+- Slug URL tidak diterjemahkan — slug tetap sama di semua locale
 
-Pertimbangan:
-- URL berbasis locale: `/id/...` dan `/en/...`
-- Semua teks UI di-hardcode ke translation keys, bukan string langsung
-- Konten properti (nama, deskripsi) juga harus tersedia dalam dua bahasa
+---
+
+## UI Variant (Feature Flag)
+
+Proyek menggunakan feature flag `uiConfig.uiVariant` di `src/config/site.ts`
+untuk beralih antara dua versi tampilan:
+
+- `"v1"` — layout awal: centered hero, card grid
+- `"v2"` — layout baru: left-aligned hero, dotted background, navbar dengan WhatsApp CTA
+
+**Kondisi aktual:** `uiVariant: "v2"` aktif. Komponen V2 berada di `src/components/`.
+
+Untuk rollback: ganti `"v2"` → `"v1"` di `src/config/site.ts`. Tidak ada perubahan
+komponen atau routing yang diperlukan.
 
 ---
 
