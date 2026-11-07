@@ -4,15 +4,13 @@
 
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import Link from "next/link";
 import { buildAlternates, uiConfig } from "@/config/site";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { ProjectCatalogV2 } from "@/components/projects/ProjectCatalogV2";
-import dehirData from "@/data/projects/dehir.json";
-import pabuaranData from "@/data/projects/pabuaran.json";
-import type { Project } from "@/types";
+import { getAllProjects, getActiveProjects } from "@/services";
 
 const OG_LOCALE: Record<string, string> = {
   id: "id_ID",
@@ -62,9 +60,12 @@ export default async function ProjectsPage({
   const tStatus = await getTranslations("status");
   const tCta = await getTranslations("cta");
 
-  const dehir = dehirData as Project;
-  const pabuaran = pabuaranData as Project;
-  const activeCount = 1;
+  const allProjects = await getAllProjects();
+  const activeProjects = await getActiveProjects();
+  const dehir = allProjects.find((p) => p.id === "dehir") || allProjects[0];
+  const pabuaran = allProjects.find((p) => p.id === "pabuaran") || allProjects[1];
+
+  const activeCount = activeProjects.length;
 
   // ── V2 ─────────────────────────────────────────────────────────────────
   if (uiConfig.uiVariant === "v2") {
@@ -90,11 +91,13 @@ export default async function ProjectsPage({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-neutral-400" aria-label="Breadcrumb">
-        <Link href={`/${locale}`} className="hover:text-primary-700">{tNav("home")}</Link>
-        <span className="mx-2">›</span>
-        <span className="text-neutral-600">{tNav("projects")}</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: tNav("home"), href: `/${locale}` },
+          { label: tNav("projects") },
+        ]}
+        className="mb-6"
+      />
 
       <h1 className="mb-2 text-2xl font-bold text-neutral-900">{tNav("projects")}</h1>
       <p className="mb-6 text-sm text-neutral-500">{activeCount} proyek aktif</p>

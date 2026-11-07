@@ -1,1 +1,158 @@
-{"nav": {"home": "Beranda", "projects": "Proyek", "contact": "Hubungi", "interest": "Formulir Minat"}, "cta": {"exploreProjects": "Jelajahi Proyek", "contactWhatsApp": "Hubungi WhatsApp", "viewOnMaps": "Lihat di Google Maps", "viewDetail": "Lihat Detail", "viewUnits": "Lihat Daftar Unit", "interestForm": "Isi Formulir Minat", "getInfo": "Hubungi untuk Info Terbaru"}, "status": {"available": "Tersedia", "process": "Proses", "sold": "Terjual", "unknown": "Belum Diketahui", "comingSoon": "Coming Soon"}, "homepage": {"heroTitle": "Celestia", "heroTagline": "Temukan Hunian Impian Anda", "projectsTitle": "Proyek Kami", "galleryTitle": "Galeri Foto", "videoTitle": "Video", "featuresTitle": "Keunggulan Proyek", "readyToExplore": "Siap menjelajahi?"}, "project": {"availableUnits": "Tersedia", "processUnits": "Proses", "soldUnits": "Terjual", "unitSummary": "Ringkasan Unit", "viewSitePlan": "Lihat Site Plan", "viewUnitCatalog": "Lihat Katalog Unit", "statusNotConfirmed": "Status unit belum dikonfirmasi"}, "unit": {"code": "Kode Unit", "type": "Tipe", "project": "Proyek", "landArea": "Luas", "dimensions": "Dimensi", "price": "Harga", "status": "Status", "contactForPrice": "Hubungi Marketing", "photoPlaceholder": "Foto belum tersedia", "viewOnSitePlan": "Lihat di Site Plan"}, "form": {"title": "Formulir Minat — Celestia Dehir", "propertyTypeRequired": "Pilih jenis properti *", "kavlingOnly": "Kavling saja", "kavlingBuilding": "Kavling + Bangunan", "kavlingCode": "Kode kavling (opsional)", "kavlingCodeNote": "Pemilihan kode kavling adalah preferensi awal, bukan reservasi atau jaminan ketersediaan", "buildingType": "Pilih tipe bangunan", "type1Lantai": "Type 1 Lantai", "type1LantaiPromo": "Type 1 Lantai Promo", "undecided": "Belum menentukan / ingin konsultasi", "additionalQuestions": "Pertanyaan Tambahan (Opsional)", "name": "Nama", "usagePurpose": "Tujuan penggunaan", "usageResidential": "Rumah tinggal", "usageOffice": "Office/kantor", "usageOther": "Lainnya", "modificationRequest": "Apakah ada kebutuhan modifikasi desain?", "notes": "Catatan atau kebutuhan khusus", "submitViaWhatsApp": "Kirim via WhatsApp", "directWhatsApp": "Hubungi Langsung"}, "comingSoon": {"title": "Coming Soon", "message": "Proyek ini sedang dalam persiapan. Informasi lengkap akan segera hadir.", "cta": "Hubungi untuk Info Terbaru"}, "empty": {"noProjects": "Data proyek sedang dipersiapkan", "noUnits": "Belum ada unit yang dapat ditampilkan", "sitePlanPlaceholder": "Denah belum tersedia", "sitePlanPlaceholderDesc": "Denah resmi proyek sedang dipersiapkan oleh perusahaan. Sementara itu, Anda dapat melihat daftar unit di bawah ini."}, "sitePlan": {"unitListTitle": "Daftar Unit", "unitNotOnPlanNote": "Unit yang Anda pilih belum dapat ditampilkan pada denah karena denah resmi sedang dipersiapkan. Anda dapat mengklik unit di daftar bawah untuk melihat detailnya."}, "error": {"notFound": "Halaman tidak ditemukan", "notFoundDesc": "Halaman yang Anda cari tidak tersedia atau telah dipindahkan.", "backHome": "Kembali ke Beranda", "errorOccurred": "Terjadi kesalahan", "tryAgain": "Coba lagi"}, "whatsapp": {"disabled": "WhatsApp belum aktif"}, "footer": {"company": "PT Mitra Rahim Indonesia", "rights": "Hak cipta dilindungi"}, "meta": {"homepageTitle": "Celestia — Temukan Hunian Impian Anda", "homepageDescription": "Jelajahi proyek properti Celestia dari PT Mitra Rahim Indonesia. Temukan kavling dan hunian di Jatiluhur dan sekitarnya.", "projectsTitle": "Proyek — Celestia", "projectsDescription": "Daftar proyek properti Celestia. Lihat proyek aktif Dehir di Jatiluhur dan proyek yang akan datang.", "explorationTitle": "Jelajahi {projectName} — Celestia", "explorationDescription": "Eksplorasi proyek {projectName} di {city}, {province}. Lihat lokasi, site plan, dan informasi unit.", "unitCatalogTitle": "Daftar Unit {projectName} — Celestia", "unitCatalogDescription": "Lihat semua unit kavling yang tersedia di proyek {projectName}, {city}.", "unitDetailTitle": "Unit {unitCode} — {projectName} — Celestia", "unitDetailDescription": "Detail unit kavling {unitCode} di proyek {projectName}, {city}. Lihat informasi lengkap dan hubungi marketing."}}
+{
+  "nav": {
+    "home": "Beranda",
+    "projects": "Proyek",
+    "contact": "Hubungi",
+    "interest": "Formulir Minat"
+  },
+  "cta": {
+    "exploreProjects": "Jelajahi Proyek",
+    "contactWhatsApp": "Hubungi WhatsApp",
+    "viewOnMaps": "Lihat di Google Maps",
+    "viewDetail": "Lihat Detail",
+    "viewUnits": "Lihat Daftar Unit",
+    "interestForm": "Isi Formulir Minat",
+    "getInfo": "Hubungi untuk Info Terbaru"
+  },
+  "status": {
+    "available": "Tersedia",
+    "process": "Proses",
+    "sold": "Terjual",
+    "unknown": "Belum Diketahui",
+    "comingSoon": "Coming Soon"
+  },
+  "homepage": {
+    "heroTitle": "Celestia",
+    "heroTagline": "Temukan Hunian Impian Anda",
+    "portalBadge": "Portal Promosi Properti",
+    "portalHeadline": "Portal Promosi Properti Terpercaya dari PT Mitra Rahim Indonesia",
+    "portalSub": "Jelajahi portofolio proyek perumahan dan penjualan kavling siap bangun. Seluruh informasi disajikan transparan mulai dari lokasi, tata letak, hingga saluran konsultasi langsung.",
+    "projectsTitle": "Proyek Kami",
+    "projectsSubtitle": "Pilihan proyek properti yang kami kembangkan dan pasarkan untuk investasi dan hunian keluarga Anda.",
+    "featuresTitle": "Mengapa Memilih Celestia?",
+    "feature1Title": "Informasi Transparan",
+    "feature1Desc": "Status unit, denah lokasi, dan detail spesifikasi disajikan terbuka tanpa informasi yang dikarang.",
+    "feature2Title": "Lokasi Strategis",
+    "feature2Desc": "Kawasan berkembang dengan aksesibilitas terjangkau dan potensi nilai investasi jangka panjang.",
+    "feature3Title": "Konsultasi Langsung",
+    "feature3Desc": "Hubungan langsung dengan perwakilan marketing resmi tanpa perantara untuk proses yang jelas.",
+    "explorationSectionTitle": "Eksplorasi Detail Unit & Site Plan",
+    "explorationSectionDesc": "Di dalam setiap halaman proyek, Anda dapat mempelajari peta lokasi, tata letak site plan kavling, serta spesifikasi per unit secara menyeluruh.",
+    "galleryTitle": "Dokumentasi & Galeri Foto",
+    "videoTitle": "Video Proyek",
+    "readyToExplore": "Siap Menemukan Kavling atau Hunian Anda?",
+    "ctaExploreAll": "Lihat Semua Proyek"
+  },
+  "project": {
+    "availableUnits": "Tersedia",
+    "processUnits": "Proses",
+    "soldUnits": "Terjual",
+    "unitSummary": "Ringkasan Unit",
+    "viewSitePlan": "Lihat Site Plan",
+    "viewUnitCatalog": "Lihat Katalog Unit",
+    "statusNotConfirmed": "Status unit belum dikonfirmasi"
+  },
+  "unit": {
+    "code": "Kode Unit",
+    "type": "Tipe",
+    "project": "Proyek",
+    "landArea": "Luas",
+    "dimensions": "Dimensi",
+    "price": "Harga",
+    "status": "Status",
+    "contactForPrice": "Hubungi Marketing",
+    "photoPlaceholder": "Foto belum tersedia",
+    "viewOnSitePlan": "Lihat di Site Plan"
+  },
+  "form": {
+    "title": "Formulir Minat — Celestia Dehir",
+    "propertyTypeRequired": "Pilih jenis properti *",
+    "kavlingOnly": "Kavling saja",
+    "kavlingBuilding": "Kavling + Bangunan",
+    "kavlingCode": "Kode kavling (opsional)",
+    "kavlingCodeNote": "Pemilihan kode kavling adalah preferensi awal calon pembeli, bukan reservasi atau jaminan ketersediaan",
+    "buildingType": "Pilih tipe bangunan",
+    "type1Lantai": "Type 1 Lantai",
+    "type1LantaiPromo": "Type 1 Lantai Promo",
+    "undecided": "Belum menentukan / ingin konsultasi",
+    "additionalQuestions": "Pertanyaan Tambahan (Opsional)",
+    "name": "Nama Lengkap",
+    "usagePurpose": "Tujuan penggunaan",
+    "usageResidential": "Rumah tinggal",
+    "usageOffice": "Office / Tempat Usaha",
+    "usageOther": "Investasi / Lainnya",
+    "modificationRequest": "Apakah ada kebutuhan modifikasi desain?",
+    "notes": "Catatan atau kebutuhan khusus",
+    "submitViaWhatsApp": "Kirim Minat via WhatsApp",
+    "directWhatsApp": "Hubungi Langsung",
+    "clientNotice": "Formulir ini tidak memungut biaya dan bukan pemesanan mengikat. Data akan disusun menjadi pesan WhatsApp untuk dibahas langsung dengan tim marketing."
+  },
+  "contactPage": {
+    "title": "Hubungi Kami",
+    "subtitle": "Saluran Komunikasi Resmi Celestia",
+    "description": "Tim marketing PT Mitra Rahim Indonesia siap membantu menjawab pertanyaan Anda seputar informasi proyek properti, jadwal survei lokasi, dan konsultasi kavling.",
+    "companyInfoTitle": "Informasi Pengembang",
+    "companyName": "PT Mitra Rahim Indonesia",
+    "officeLocation": "Lokasi Proyek Aktif",
+    "officeLocationValue": "Jatiluhur, Jawa Barat (Proyek Dehir)",
+    "serviceHours": "Waktu Pelayanan Konsultasi",
+    "serviceHoursValue": "Senin – Sabtu: 08.30 – 17.00 WIB",
+    "marketingTitle": "Kontak Marketing & Konsultasi",
+    "marketingDesc": "Hubungi tim marketing kami via WhatsApp untuk respon cepat mengenai informasi unit, ketersediaan kavling, dan janji temu survei.",
+    "chatWhatsApp": "Hubungi via WhatsApp",
+    "interestFormNotice": "Ingin menyampaikan preferensi kavling atau tipe bangunan spesifik?",
+    "interestFormCta": "Buka Formulir Minat",
+    "faqTitle": "Pertanyaan yang Sering Diajukan",
+    "faq1Question": "Bagaimana cara melakukan survei ke lokasi proyek?",
+    "faq1Answer": "Anda dapat menghubungi tim marketing kami melalui WhatsApp untuk membuat jadwal kunjungan survei ke lokasi proyek Dehir di Jatiluhur.",
+    "faq2Question": "Apakah saya bisa langsung memesan atau booking kavling melalui website?",
+    "faq2Answer": "Saat ini website berfungsi sebagai media promosi dan eksplorasi informasi. Pemesanan dan verifikasi ketersediaan kavling dilakukan melalui koordinasi langsung dengan marketing.",
+    "faq3Question": "Apakah status unit di website sudah final?",
+    "faq3Answer": "Status unit yang belum dikonfirmasi perusahaan diberi label 'Belum Diketahui' demi transparansi. Konfirmasi ketersediaan terkini dapat ditanyakan langsung ke marketing."
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "message": "Proyek ini sedang dalam persiapan. Informasi lengkap akan segera hadir.",
+    "cta": "Hubungi untuk Info Terbaru"
+  },
+  "empty": {
+    "noProjects": "Data proyek sedang dipersiapkan",
+    "noUnits": "Belum ada unit yang dapat ditampilkan",
+    "sitePlanPlaceholder": "Denah belum tersedia",
+    "sitePlanPlaceholderDesc": "Denah resmi proyek sedang dipersiapkan oleh perusahaan. Sementara itu, Anda dapat melihat daftar unit di bawah ini."
+  },
+  "sitePlan": {
+    "unitListTitle": "Daftar Unit",
+    "unitNotOnPlanNote": "Unit yang Anda pilih belum dapat ditampilkan pada denah karena denah resmi sedang dipersiapkan. Anda dapat mengklik unit di daftar bawah untuk melihat detailnya."
+  },
+  "error": {
+    "notFound": "Halaman tidak ditemukan",
+    "notFoundDesc": "Halaman yang Anda cari tidak tersedia atau telah dipindahkan.",
+    "backHome": "Kembali ke Beranda",
+    "errorOccurred": "Terjadi kesalahan",
+    "tryAgain": "Coba lagi"
+  },
+  "whatsapp": {
+    "disabled": "WhatsApp belum aktif"
+  },
+  "footer": {
+    "company": "PT Mitra Rahim Indonesia",
+    "rights": "Hak cipta dilindungi"
+  },
+  "meta": {
+    "homepageTitle": "Celestia — Portal Promosi Properti PT Mitra Rahim Indonesia",
+    "homepageDescription": "Portal promosi properti Celestia dari PT Mitra Rahim Indonesia. Eksplorasi perumahan dan kavling di Jatiluhur dan sekitarnya secara transparan.",
+    "projectsTitle": "Katalog Proyek — Celestia",
+    "projectsDescription": "Daftar proyek properti Celestia. Lihat proyek aktif Dehir di Jatiluhur dan proyek yang akan datang.",
+    "explorationTitle": "Jelajahi {projectName} — Celestia",
+    "explorationDescription": "Eksplorasi proyek {projectName} di {city}, {province}. Lihat lokasi, site plan, dan informasi unit.",
+    "unitCatalogTitle": "Daftar Unit {projectName} — Celestia",
+    "unitCatalogDescription": "Lihat semua unit kavling yang tersedia di proyek {projectName}, {city}.",
+    "unitDetailTitle": "Unit {unitCode} — {projectName} — Celestia",
+    "unitDetailDescription": "Detail unit kavling {unitCode} di proyek {projectName}, {city}. Lihat informasi lengkap dan hubungi marketing.",
+    "contactTitle": "Hubungi Kami — Celestia",
+    "contactDescription": "Saluran komunikasi resmi pemasaran properti Celestia oleh PT Mitra Rahim Indonesia.",
+    "interestTitle": "Formulir Minat Dehir — Celestia",
+    "interestDescription": "Sampaikan preferensi kavling dan tipe bangunan yang Anda minati di proyek Celestia Dehir."
+  }
+}

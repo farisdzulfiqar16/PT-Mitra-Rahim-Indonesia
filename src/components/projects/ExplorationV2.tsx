@@ -1,25 +1,13 @@
-/**
- * ExplorationV2 — Layout baru halaman eksplorasi proyek.
- *
- * Mengikuti desain referensi:
- * - Header cream dengan nama proyek + breadcrumb
- * - Filter/tab bar (Semua, Tersedia, Proses, Terjual, Reservasi)
- * - Grid unit card dengan info lengkap + CTA WhatsApp + Detail button
- * - Sidebar kanan: peta placeholder + info ringkas
- *
- * Sistem (data, notFound, SEO) tidak berubah.
- * Undo: ubah uiConfig.uiVariant = "v1" di src/config/site.ts
- */
+"use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { SitePlanPanel } from "@/features/site-plan/SitePlanPanel";
-import {
-  buildWhatsAppUrl,
-  buildProjectWhatsAppMessage,
-  isWhatsAppNumberPlaceholder,
-} from "@/config/site";
+import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
+import { cn } from "@/lib/utils";
 import type { Project, PropertyUnit, UnitStatus } from "@/types";
 
 interface ExplorationV2Props {
@@ -60,24 +48,37 @@ export function ExplorationV2({
   sitePlanAvailable,
   labels,
 }: ExplorationV2Props) {
-  const waDisabled = isWhatsAppNumberPlaceholder();
-  const waUrl = waDisabled
-    ? undefined
-    : buildWhatsAppUrl(buildProjectWhatsAppMessage(project.fullName, locale as "id" | "en"));
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+
+  const filterOptions = [
+    { id: "all", label: labels.filterAll },
+    { id: "available", label: labels.available },
+    { id: "process", label: labels.process },
+    { id: "sold", label: labels.sold },
+    { id: "unknown", label: labels.unknown },
+  ];
+
+  const filteredUnits = units.filter((unit) => {
+    if (activeFilter === "all") return true;
+    return unit.status === activeFilter;
+  });
 
   return (
     <div className="flex flex-col">
       {/* Page header — cream */}
-      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <nav className="mb-3 flex items-center gap-1.5 text-xs text-neutral-500" aria-label="Breadcrumb">
-            <Link href={`/${locale}`} className="hover:text-primary-700 transition-colors">{labels.home}</Link>
-            <span aria-hidden="true">›</span>
-            <Link href={`/${locale}/projects`} className="hover:text-primary-700 transition-colors">{labels.projects}</Link>
-            <span aria-hidden="true">›</span>
-            <span className="text-neutral-700 font-medium">{project.name}</span>
-          </nav>
-          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">{project.fullName}</h1>
+      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8 border-b border-neutral-200/80">
+        <div className="mx-auto max-w-7xl animate-fade-in-up">
+          <Breadcrumb
+            items={[
+              { label: labels.home, href: `/${locale}` },
+              { label: labels.projects, href: `/${locale}/projects` },
+              { label: project.name },
+            ]}
+            className="mb-3"
+          />
+          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+            {project.fullName}
+          </h1>
           <p className="mt-1 text-sm text-neutral-500">
             📍 {project.location.city}, {project.location.province}
           </p>
@@ -86,64 +87,76 @@ export function ExplorationV2({
 
       {/* Main content */}
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Jelajahi properti label + filter */}
+        {/* Jelajahi properti label + interactive filter */}
         <div className="mb-6">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-400">
-            Jelajahi properti
+          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-neutral-400">
+            Eksplorasi Kavling
           </p>
-          <h2 className="mb-4 text-xl font-bold text-neutral-900">
-            {project.name} · {project.fullName}
-          </h2>
-
-          {/* Filter chips — visual only, sistem filter bisa dikembangkan nanti */}
-          <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center rounded-full bg-primary-700 px-4 py-1.5 text-xs font-semibold text-white">
-              {labels.filterAll}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <h2 className="text-xl font-bold text-neutral-900">
+              {project.name} · {project.fullName}
+            </h2>
+            <span className="text-xs text-neutral-400 font-medium">
+              Menampilkan {filteredUnits.length} dari {units.length} unit
             </span>
-            {[labels.available, labels.process, labels.sold, labels.unknown].map((label) => (
-              <span
-                key={label}
-                className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-4 py-1.5 text-xs font-medium text-neutral-600 hover:border-primary-300 cursor-pointer transition-colors"
-              >
-                {label}
-              </span>
-            ))}
           </div>
 
-          <p className="mt-2 text-xs text-neutral-400">
-            {units.length} unit · {labels.statusNotConfirmed}
-          </p>
+          {/* Filter chips interaktif */}
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter status unit">
+            {filterOptions.map((opt) => {
+              const isActive = activeFilter === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setActiveFilter(opt.id)}
+                  aria-pressed={isActive}
+                  className={cn(
+                    "inline-flex items-center rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-150 cursor-pointer min-h-[32px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                    isActive
+                      ? "bg-primary-700 text-white font-semibold shadow-xs"
+                      : "border border-neutral-200 bg-white text-neutral-600 hover:border-primary-300 hover:text-primary-700"
+                  )}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Two-column layout: unit grid + sidebar */}
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          {/* Unit grid */}
+        {/* 2-column: Unit Grid kiri (65%) + Sidebar kanan (35%) */}
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+          {/* Kiri: Grid unit cards */}
           <div className="flex-1">
-            {units.length === 0 ? (
-              <p className="py-8 text-center text-sm text-neutral-400">—</p>
+            {filteredUnits.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 p-10 text-center text-sm text-neutral-500">
+                Tidak ada unit dengan status terpilih.
+              </div>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {units.map((unit) => (
+                {filteredUnits.map((unit) => (
                   <UnitCard
                     key={unit.unitCode}
                     unit={unit}
                     locale={locale}
-                    projectSlug={project.slug}
+                    project={project}
                     labels={labels}
-                    waDisabled={waDisabled}
-                    waUrl={waUrl}
                   />
                 ))}
               </div>
             )}
           </div>
 
-          {/* Sidebar kanan */}
-          <aside className="w-full shrink-0 lg:w-72 xl:w-80 space-y-4">
-            {/* Peta */}
-            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+          {/* Kanan: Sidebar peta + ringkasan */}
+          <aside className="w-full lg:w-80 shrink-0 space-y-5">
+            {/* Peta lokasi */}
+            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs">
               <div className="border-b border-neutral-100 px-4 py-3">
-                <h3 className="text-sm font-semibold text-neutral-700">📍 Lokasi</h3>
+                <h3 className="text-sm font-semibold text-neutral-900">
+                  📍 Lokasi · {project.location.city}
+                </h3>
+                <p className="text-xs text-neutral-400">{project.location.province}</p>
               </div>
               <Placeholder
                 type="map"
@@ -154,7 +167,7 @@ export function ExplorationV2({
             </div>
 
             {/* Site Plan panel ringkas */}
-            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm p-4">
+            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs p-4">
               <SitePlanPanel
                 isAvailable={sitePlanAvailable}
                 units={units}
@@ -186,17 +199,13 @@ export function ExplorationV2({
 function UnitCard({
   unit,
   locale,
-  projectSlug,
+  project,
   labels,
-  waDisabled,
-  waUrl,
 }: {
   unit: PropertyUnit;
   locale: string;
-  projectSlug: string;
+  project: Project;
   labels: ExplorationV2Props["labels"];
-  waDisabled: boolean;
-  waUrl: string | undefined;
 }) {
   const statusLabel =
     unit.status === "available" ? labels.available
@@ -205,7 +214,7 @@ function UnitCard({
     : labels.unknown;
 
   return (
-    <article className="flex flex-col rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden hover:shadow-md hover:border-primary-200 transition-shadow">
+    <article className="flex flex-col rounded-xl border border-neutral-200 bg-white shadow-xs overflow-hidden hover:shadow-md hover:border-primary-300 transition-all duration-200 hover:-translate-y-0.5">
       {/* Image placeholder */}
       <Placeholder
         type="image"
@@ -223,50 +232,43 @@ function UnitCard({
         </div>
 
         {/* Specs row */}
-        <div className="my-3 grid grid-cols-3 gap-2 rounded-lg bg-neutral-50 px-3 py-2">
-          <div className="text-center">
+        <div className="my-3 grid grid-cols-3 gap-2 rounded-lg bg-neutral-50 px-3 py-2 text-center">
+          <div>
             <p className="text-[10px] text-neutral-400">Luas</p>
             <p className="text-xs font-semibold text-neutral-700">
               {unit.landArea != null ? `${unit.landArea} m²` : "—"}
             </p>
           </div>
-          <div className="text-center border-x border-neutral-200">
+          <div className="border-x border-neutral-200">
             <p className="text-[10px] text-neutral-400">Harga</p>
             <p className="text-xs font-semibold text-neutral-700">{labels.contactForPrice}</p>
           </div>
-          <div className="text-center">
+          <div>
             <p className="text-[10px] text-neutral-400">Status</p>
             <p className="text-xs font-semibold text-neutral-700">{statusLabel}</p>
           </div>
         </div>
 
         {/* CTA row */}
-        <div className="mt-auto flex gap-2">
+        <div className="mt-auto flex gap-2 pt-1">
           <Link
-            href={`/${locale}/projects/${projectSlug}/units/${unit.unitCode}`}
+            href={`/${locale}/projects/${project.slug}/units/${unit.unitCode}`}
             className="flex flex-1 items-center justify-center rounded-md border border-primary-300 bg-primary-50 px-3 py-2 text-xs font-semibold text-primary-700 hover:bg-primary-100 transition-colors min-h-[36px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
           >
             {labels.viewDetail}
           </Link>
-          {waDisabled ? (
-            <span
-              className="flex items-center justify-center rounded-md bg-neutral-100 px-3 py-2 text-xs font-semibold text-neutral-400 min-h-[36px] cursor-not-allowed"
-              aria-disabled="true"
-              title={labels.waDisabled}
-            >
-              WA
-            </span>
-          ) : (
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-md bg-whatsapp px-3 py-2 text-xs font-semibold text-white hover:bg-whatsapp-hover transition-colors min-h-[36px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-whatsapp"
-              aria-label={`${labels.contactWhatsApp} — ${unit.unitCode}`}
-            >
-              WA
-            </a>
-          )}
+          <WhatsAppButton
+            locale={locale as "id" | "en"}
+            context="unit"
+            projectFullName={project.fullName}
+            unitCode={unit.unitCode}
+            variant="compact"
+            disabledMessage={labels.waDisabled}
+            ariaLabel={`${labels.contactWhatsApp} — ${unit.unitCode}`}
+            showIcon={false}
+          >
+            WA
+          </WhatsAppButton>
         </div>
       </div>
     </article>

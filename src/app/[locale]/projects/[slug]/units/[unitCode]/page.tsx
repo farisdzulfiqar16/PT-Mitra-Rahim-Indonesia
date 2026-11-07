@@ -8,20 +8,13 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
-import {
-  siteConfig,
-  uiConfig,
-  buildAlternates,
-  buildWhatsAppUrl,
-  buildUnitWhatsAppMessage,
-  isWhatsAppNumberPlaceholder,
-} from "@/config/site";
+import { Breadcrumb } from "@/components/layout/Breadcrumb";
+import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
+import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
 import { formatRupiah } from "@/lib/utils";
 import { UnitDetailV2 } from "@/components/projects/UnitDetailV2";
-import dehirData from "@/data/projects/dehir.json";
-import pabuaranData from "@/data/projects/pabuaran.json";
-import dehirUnitsData from "@/data/properties/dehir-units.json";
-import type { Project, PropertyUnit, UnitStatus } from "@/types";
+import { getProjectBySlug, getProjectBySlugSync, getUnitByCode } from "@/services";
+import type { UnitStatus } from "@/types";
 
 /** OG locale mapping */
 const OG_LOCALE: Record<string, string> = {
@@ -36,12 +29,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug, unitCode } = await params;
 
-  const allProjects = [dehirData, pabuaranData] as Project[];
-  const project = allProjects.find((p) => p.slug === slug);
+  const project = getProjectBySlugSync(slug);
   if (!project || project.status !== "active") return {};
 
-  const units = dehirUnitsData as PropertyUnit[];
-  const unit = units.find((u) => u.unitCode === unitCode && u.projectId === project.id);
+  const unit = await getUnitByCode(project.id, unitCode);
   if (!unit) return {};
 
   const t = await getTranslations({ locale, namespace: "meta" });
@@ -90,26 +81,17 @@ export default async function UnitDetailPage({
   const tCta = await getTranslations("cta");
   const tWa = await getTranslations("whatsapp");
 
-  const allProjects = [dehirData, pabuaranData] as Project[];
-  const project = allProjects.find((p) => p.slug === slug);
+  const project = await getProjectBySlug(slug);
 
   if (!project || project.status !== "active") {
     notFound();
   }
 
-  const units = dehirUnitsData as PropertyUnit[];
-  const unit = units.find((u) => u.unitCode === unitCode && u.projectId === project.id);
+  const unit = await getUnitByCode(project.id, unitCode);
 
   if (!unit) {
     notFound();
   }
-
-  const waDisabled = isWhatsAppNumberPlaceholder();
-  const waUrl = waDisabled
-    ? undefined
-    : buildWhatsAppUrl(
-        buildUnitWhatsAppMessage(unit.unitCode, project.fullName, locale as "id" | "en")
-      );
 
   // ── V2 ─────────────────────────────────────────────────────────────────
   if (uiConfig.uiVariant === "v2") {
@@ -118,8 +100,6 @@ export default async function UnitDetailPage({
         locale={locale}
         project={project}
         unit={unit}
-        waDisabled={waDisabled}
-        waUrl={waUrl}
         labels={{
           home: tNav("home"),
           projects: tNav("projects"),
@@ -149,17 +129,16 @@ export default async function UnitDetailPage({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-neutral-400" aria-label="Breadcrumb">
-        <Link href={`/${locale}`} className="hover:text-primary-700">{tNav("home")}</Link>
-        <span className="mx-2">›</span>
-        <Link href={`/${locale}/projects`} className="hover:text-primary-700">{tNav("projects")}</Link>
-        <span className="mx-2">›</span>
-        <Link href={`/${locale}/projects/${project.slug}`} className="hover:text-primary-700">{project.name}</Link>
-        <span className="mx-2">›</span>
-        <Link href={`/${locale}/projects/${project.slug}/units`} className="hover:text-primary-700">{tUnit("code")}s</Link>
-        <span className="mx-2">›</span>
-        <span className="text-neutral-600">{unit.unitCode}</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: tNav("home"), href: `/${locale}` },
+          { label: tNav("projects"), href: `/${locale}/projects` },
+          { label: project.name, href: `/${locale}/projects/${project.slug}` },
+          { label: `${tUnit("code")}s`, href: `/${locale}/projects/${project.slug}/units` },
+          { label: unit.unitCode },
+        ]}
+        className="mb-6"
+      />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Photo/Placeholder */}
@@ -179,10 +158,10 @@ export default async function UnitDetailPage({
               <p className="mt-1 text-sm text-neutral-500">{project.fullName}</p>
             </div>
             <Badge variant={unit.status as UnitStatus}>
-              {unit.status === "unknown" ? tStatus("unknown")
-                : unit.status === "available" ? tStatus("available")
-                : unit.status === "process" ? tStatus("process")
-                : tStatus("sold")}
+              {tStatus(unit.status === "unknown" ? "unknown"
+                : unit.status === "available" ? "available"
+                : unit.status === "process" ? "process"
+                : "sold")}
             </Badge>
           </div>
 
@@ -224,24 +203,17 @@ export default async function UnitDetailPage({
 
           {/* CTA */}
           <div className="flex flex-col gap-3 pt-2">
-            {waDisabled ? (
-              <div
-                className="flex items-center justify-center rounded-lg bg-neutral-100 px-6 py-3 text-sm font-medium text-neutral-400 min-h-[44px]"
-                aria-disabled="true"
-                title={tWa("disabled")}
-              >
-                {tWa("disabled")}
-              </div>
-            ) : (
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-medium text-white hover:bg-whatsapp-hover transition-colors min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-whatsapp focus-visible:ring-offset-2"
-              >
-                💬 {tCta("contactWhatsApp")}
-              </a>
-            )}
+            <WhatsAppButton
+              locale={locale as "id" | "en"}
+              context="unit"
+              projectFullName={project.fullName}
+              unitCode={unit.unitCode}
+              variant="primary"
+              disabledMessage={tWa("disabled")}
+            >
+              💬 {tCta("contactWhatsApp")}
+            </WhatsAppButton>
+
             <Link
               href={`/${locale}/projects/${project.slug}?unit=${unit.unitCode}`}
               className="flex items-center justify-center rounded-lg border border-primary-300 bg-primary-50 px-6 py-3 text-sm font-medium text-primary-700 hover:bg-primary-100 transition-colors min-h-[44px]"

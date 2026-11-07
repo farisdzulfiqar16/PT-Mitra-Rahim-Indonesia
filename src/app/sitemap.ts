@@ -17,8 +17,7 @@
 
 import type { MetadataRoute } from "next";
 import { seoConfig } from "@/config/site";
-import dehirData from "@/data/projects/dehir.json";
-import dehirUnitsData from "@/data/properties/dehir-units.json";
+import { getActiveProjectsSync, getUnitsByProjectSync } from "@/services";
 
 /** Locale yang didukung */
 const LOCALES = ["id", "en"] as const;
@@ -65,10 +64,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return [];
   }
 
-  const dehirSlug = dehirData.slug;
-  const unitCodes = (dehirUnitsData as Array<{ unitCode: string }>).map(
-    (u) => u.unitCode
-  );
+  const activeProjects = getActiveProjectsSync();
+  const dehir = activeProjects.find((p) => p.id === "dehir") || activeProjects[0];
+  const dehirSlug = dehir ? dehir.slug : "dehir";
+  const units = getUnitsByProjectSync("dehir");
+  const unitCodes = units.map((u) => u.unitCode);
 
   return [
     // Homepage — prioritas tertinggi
@@ -77,8 +77,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Katalog Proyek
     ...buildBilingualEntry("/projects", "monthly", 0.9),
 
-    // Halaman Eksplorasi Dehir (satu-satunya proyek aktif)
-    // Pabuaran coming-soon tidak dimasukkan
+    // Halaman Eksplorasi Dehir (proyek aktif)
     ...buildBilingualEntry(`/projects/${dehirSlug}`, "monthly", 0.9),
 
     // Katalog Unit Dehir
@@ -89,6 +88,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       buildBilingualEntry(`/projects/${dehirSlug}/units/${unitCode}`, "weekly", 0.7)
     ),
 
-    // Catatan: /interest tidak dimasukkan karena route belum tersedia
+    // Formulir Minat Dehir
+    ...buildBilingualEntry("/interest", "monthly", 0.8),
+
+    // Kontak Perusahaan
+    ...buildBilingualEntry("/contact", "monthly", 0.7),
   ];
 }

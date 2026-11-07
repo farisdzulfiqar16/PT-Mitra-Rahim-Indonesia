@@ -1,1 +1,158 @@
-{"nav": {"home": "Home", "projects": "Projects", "contact": "Contact", "interest": "Interest Form"}, "cta": {"exploreProjects": "Explore Projects", "contactWhatsApp": "Contact WhatsApp", "viewOnMaps": "View on Google Maps", "viewDetail": "View Details", "viewUnits": "View Unit List", "interestForm": "Fill Interest Form", "getInfo": "Contact for Latest Info"}, "status": {"available": "Available", "process": "In Process", "sold": "Sold", "unknown": "Unknown", "comingSoon": "Coming Soon"}, "homepage": {"heroTitle": "Celestia", "heroTagline": "Find Your Dream Home", "projectsTitle": "Our Projects", "galleryTitle": "Photo Gallery", "videoTitle": "Video", "featuresTitle": "Project Highlights", "readyToExplore": "Ready to explore?"}, "project": {"availableUnits": "Available", "processUnits": "In Process", "soldUnits": "Sold", "unitSummary": "Unit Summary", "viewSitePlan": "View Site Plan", "viewUnitCatalog": "View Unit Catalog", "statusNotConfirmed": "Unit status not yet confirmed"}, "unit": {"code": "Unit Code", "type": "Type", "project": "Project", "landArea": "Area", "dimensions": "Dimensions", "price": "Price", "status": "Status", "contactForPrice": "Contact Marketing", "photoPlaceholder": "Photo not available", "viewOnSitePlan": "View on Site Plan"}, "form": {"title": "Interest Form — Celestia Dehir", "propertyTypeRequired": "Select property type *", "kavlingOnly": "Land Only", "kavlingBuilding": "Land + Building", "kavlingCode": "Plot code (optional)", "kavlingCodeNote": "Selecting a plot code is an initial preference, not a reservation or guarantee of availability", "buildingType": "Select building type", "type1Lantai": "Type 1 Floor", "type1LantaiPromo": "Type 1 Floor Promo", "undecided": "Undecided / want consultation", "additionalQuestions": "Additional Questions (Optional)", "name": "Name", "usagePurpose": "Usage purpose", "usageResidential": "Residential", "usageOffice": "Office", "usageOther": "Other", "modificationRequest": "Any design modification needed?", "notes": "Notes or special requirements", "submitViaWhatsApp": "Submit via WhatsApp", "directWhatsApp": "Contact Directly"}, "comingSoon": {"title": "Coming Soon", "message": "This project is being prepared. Full information will be available soon.", "cta": "Contact for Latest Info"}, "empty": {"noProjects": "Project data is being prepared", "noUnits": "No units available to display yet", "sitePlanPlaceholder": "Site plan not available", "sitePlanPlaceholderDesc": "The official site plan is being prepared by the company. In the meantime, you can view the unit list below."}, "sitePlan": {"unitListTitle": "Unit List", "unitNotOnPlanNote": "The selected unit cannot be shown on the site plan yet because the official plan is being prepared. You can click a unit in the list below to view its details."}, "error": {"notFound": "Page Not Found", "notFoundDesc": "The page you are looking for is not available or has been moved.", "backHome": "Back to Home", "errorOccurred": "An error occurred", "tryAgain": "Try again"}, "whatsapp": {"disabled": "WhatsApp not yet active"}, "footer": {"company": "PT Mitra Rahim Indonesia", "rights": "All rights reserved"}, "meta": {"homepageTitle": "Celestia — Find Your Dream Home", "homepageDescription": "Explore Celestia property projects by PT Mitra Rahim Indonesia. Discover plots and homes in Jatiluhur and surrounding areas.", "projectsTitle": "Projects — Celestia", "projectsDescription": "Celestia property project list. View the active Dehir project in Jatiluhur and upcoming projects.", "explorationTitle": "Explore {projectName} — Celestia", "explorationDescription": "Explore the {projectName} project in {city}, {province}. View location, site plan, and unit information.", "unitCatalogTitle": "{projectName} Unit Catalog — Celestia", "unitCatalogDescription": "View all available plot units in the {projectName} project, {city}.", "unitDetailTitle": "Unit {unitCode} — {projectName} — Celestia", "unitDetailDescription": "Details of plot unit {unitCode} in {projectName} project, {city}. View full information and contact marketing."}}
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "contact": "Contact",
+    "interest": "Interest Form"
+  },
+  "cta": {
+    "exploreProjects": "Explore Projects",
+    "contactWhatsApp": "Contact WhatsApp",
+    "viewOnMaps": "View on Google Maps",
+    "viewDetail": "View Details",
+    "viewUnits": "View Unit List",
+    "interestForm": "Fill Interest Form",
+    "getInfo": "Contact for Latest Info"
+  },
+  "status": {
+    "available": "Available",
+    "process": "In Process",
+    "sold": "Sold",
+    "unknown": "Unknown",
+    "comingSoon": "Coming Soon"
+  },
+  "homepage": {
+    "heroTitle": "Celestia",
+    "heroTagline": "Find Your Dream Home",
+    "portalBadge": "Property Promotion Portal",
+    "portalHeadline": "Trusted Property Promotion Portal by PT Mitra Rahim Indonesia",
+    "portalSub": "Explore our portfolio of housing developments and ready-to-build plots. Transparent information presented from location, site layouts, to direct consultation channels.",
+    "projectsTitle": "Our Projects",
+    "projectsSubtitle": "Property developments crafted and marketed for your long-term investment and family living.",
+    "featuresTitle": "Why Choose Celestia?",
+    "feature1Title": "Transparent Information",
+    "feature1Desc": "Unit statuses, layout plans, and specifications are presented openly without fabricated data.",
+    "feature2Title": "Strategic Locations",
+    "feature2Desc": "Growing areas with accessible connectivity and high long-term appreciation potential.",
+    "feature3Title": "Direct Consultation",
+    "feature3Desc": "Direct connection to official marketing representatives without intermediaries for a transparent journey.",
+    "explorationSectionTitle": "Explore Unit Details & Site Plans",
+    "explorationSectionDesc": "Inside each project page, explore location maps, interactive lot layouts, and comprehensive unit specifications.",
+    "galleryTitle": "Project Gallery & Documentation",
+    "videoTitle": "Project Video",
+    "readyToExplore": "Ready to Find Your Ideal Plot or Home?",
+    "ctaExploreAll": "Browse All Projects"
+  },
+  "project": {
+    "availableUnits": "Available",
+    "processUnits": "In Process",
+    "soldUnits": "Sold",
+    "unitSummary": "Unit Summary",
+    "viewSitePlan": "View Site Plan",
+    "viewUnitCatalog": "View Unit Catalog",
+    "statusNotConfirmed": "Unit status not yet confirmed"
+  },
+  "unit": {
+    "code": "Unit Code",
+    "type": "Type",
+    "project": "Project",
+    "landArea": "Area",
+    "dimensions": "Dimensions",
+    "price": "Price",
+    "status": "Status",
+    "contactForPrice": "Contact Marketing",
+    "photoPlaceholder": "Photo not available",
+    "viewOnSitePlan": "View on Site Plan"
+  },
+  "form": {
+    "title": "Interest Form — Celestia Dehir",
+    "propertyTypeRequired": "Select property type *",
+    "kavlingOnly": "Land Only",
+    "kavlingBuilding": "Land + Building",
+    "kavlingCode": "Plot code (optional)",
+    "kavlingCodeNote": "Selecting a plot code is an initial preference, not a reservation or guarantee of availability",
+    "buildingType": "Select building type",
+    "type1Lantai": "Type 1 Floor",
+    "type1LantaiPromo": "Type 1 Floor Promo",
+    "undecided": "Undecided / want consultation",
+    "additionalQuestions": "Additional Questions (Optional)",
+    "name": "Full Name",
+    "usagePurpose": "Usage purpose",
+    "usageResidential": "Residential",
+    "usageOffice": "Office / Workspace",
+    "usageOther": "Investment / Other",
+    "modificationRequest": "Any design modification needed?",
+    "notes": "Notes or special requirements",
+    "submitViaWhatsApp": "Submit Interest via WhatsApp",
+    "directWhatsApp": "Contact Directly",
+    "clientNotice": "This form involves no charges and does not constitute a binding booking. Data is compiled into a WhatsApp message to be reviewed directly with our marketing team."
+  },
+  "contactPage": {
+    "title": "Contact Us",
+    "subtitle": "Official Communication Channel of Celestia",
+    "description": "The PT Mitra Rahim Indonesia marketing team is ready to assist you with inquiries regarding property projects, location survey schedules, and plot consultations.",
+    "companyInfoTitle": "Developer Information",
+    "companyName": "PT Mitra Rahim Indonesia",
+    "officeLocation": "Active Project Location",
+    "officeLocationValue": "Jatiluhur, West Java (Dehir Project)",
+    "serviceHours": "Consultation Service Hours",
+    "serviceHoursValue": "Monday – Saturday: 08.30 – 17.00 WIB",
+    "marketingTitle": "Marketing Contact & Consultation",
+    "marketingDesc": "Reach our marketing team via WhatsApp for prompt responses regarding unit information, plot availability, and site survey appointments.",
+    "chatWhatsApp": "Chat via WhatsApp",
+    "interestFormNotice": "Looking to submit specific plot or building type preferences?",
+    "interestFormCta": "Open Interest Form",
+    "faqTitle": "Frequently Asked Questions",
+    "faq1Question": "How do I schedule a project site survey?",
+    "faq1Answer": "You can reach out to our marketing team via WhatsApp to schedule a guided site visit to the Dehir project in Jatiluhur.",
+    "faq2Question": "Can I book or purchase a plot directly through the website?",
+    "faq2Answer": "Currently, the website serves as a promotional and exploration platform. Reservations and availability verifications are handled directly through our marketing team.",
+    "faq3Question": "Is the unit status shown on the website final?",
+    "faq3Answer": "Units without confirmed company status are labeled 'Unknown' for full transparency. Up-to-date availability can be confirmed directly with marketing."
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "message": "This project is being prepared. Full information will be available soon.",
+    "cta": "Contact for Latest Info"
+  },
+  "empty": {
+    "noProjects": "Project data is being prepared",
+    "noUnits": "No units available to display yet",
+    "sitePlanPlaceholder": "Site plan not available",
+    "sitePlanPlaceholderDesc": "The official site plan is being prepared by the company. In the meantime, you can view the unit list below."
+  },
+  "sitePlan": {
+    "unitListTitle": "Unit List",
+    "unitNotOnPlanNote": "The selected unit cannot be shown on the site plan yet because the official plan is being prepared. You can click a unit in the list below to view its details."
+  },
+  "error": {
+    "notFound": "Page Not Found",
+    "notFoundDesc": "The page you are looking for is not available or has been moved.",
+    "backHome": "Back to Home",
+    "errorOccurred": "An error occurred",
+    "tryAgain": "Try again"
+  },
+  "whatsapp": {
+    "disabled": "WhatsApp not yet active"
+  },
+  "footer": {
+    "company": "PT Mitra Rahim Indonesia",
+    "rights": "All rights reserved"
+  },
+  "meta": {
+    "homepageTitle": "Celestia — Property Promotion Portal by PT Mitra Rahim Indonesia",
+    "homepageDescription": "Celestia property promotion portal by PT Mitra Rahim Indonesia. Explore housing developments and plots in Jatiluhur transparently.",
+    "projectsTitle": "Project Catalog — Celestia",
+    "projectsDescription": "Celestia property project catalog. View active Dehir project in Jatiluhur and upcoming developments.",
+    "explorationTitle": "Explore {projectName} — Celestia",
+    "explorationDescription": "Explore the {projectName} project in {city}, {province}. View location, site plan, and unit information.",
+    "unitCatalogTitle": "{projectName} Unit Catalog — Celestia",
+    "unitCatalogDescription": "View all available plot units in the {projectName} project, {city}.",
+    "unitDetailTitle": "Unit {unitCode} — {projectName} — Celestia",
+    "unitDetailDescription": "Details of plot unit {unitCode} in {projectName} project, {city}. View full information and contact marketing.",
+    "contactTitle": "Contact Us — Celestia",
+    "contactDescription": "Official communication channel for Celestia property marketing by PT Mitra Rahim Indonesia.",
+    "interestTitle": "Dehir Interest Form — Celestia",
+    "interestDescription": "Submit your preferred plots and building types for the Celestia Dehir project."
+  }
+}

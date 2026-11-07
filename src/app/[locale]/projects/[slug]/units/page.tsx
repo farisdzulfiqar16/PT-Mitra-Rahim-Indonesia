@@ -5,15 +5,13 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { UnitCatalogV2 } from "@/components/projects/UnitCatalogV2";
-import dehirData from "@/data/projects/dehir.json";
-import pabuaranData from "@/data/projects/pabuaran.json";
-import dehirUnitsData from "@/data/properties/dehir-units.json";
-import type { Project, PropertyUnit, UnitStatus } from "@/types";
+import { getProjectBySlug, getProjectBySlugSync, getUnitsByProject } from "@/services";
+import type { UnitStatus } from "@/types";
 
 /** OG locale mapping */
 const OG_LOCALE: Record<string, string> = {
@@ -28,8 +26,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
 
-  const allProjects = [dehirData, pabuaranData] as Project[];
-  const project = allProjects.find((p) => p.slug === slug);
+  const project = getProjectBySlugSync(slug);
   if (!project || project.status !== "active") return {};
 
   const t = await getTranslations({ locale, namespace: "meta" });
@@ -77,14 +74,13 @@ export default async function UnitCatalogPage({
   const tCta = await getTranslations("cta");
   const tWa = await getTranslations("whatsapp");
 
-  const allProjects = [dehirData, pabuaranData] as Project[];
-  const project = allProjects.find((p) => p.slug === slug);
+  const project = await getProjectBySlug(slug);
 
   if (!project || project.status !== "active") {
     notFound();
   }
 
-  const units = dehirUnitsData as PropertyUnit[];
+  const units = await getUnitsByProject(project.id);
 
   // ── V2 ─────────────────────────────────────────────────────────────────
   if (uiConfig.uiVariant === "v2") {
@@ -115,15 +111,15 @@ export default async function UnitCatalogPage({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-neutral-400" aria-label="Breadcrumb">
-        <Link href={`/${locale}`} className="hover:text-primary-700">{tNav("home")}</Link>
-        <span className="mx-2">›</span>
-        <Link href={`/${locale}/projects`} className="hover:text-primary-700">{tNav("projects")}</Link>
-        <span className="mx-2">›</span>
-        <Link href={`/${locale}/projects/${project.slug}`} className="hover:text-primary-700">{project.name}</Link>
-        <span className="mx-2">›</span>
-        <span className="text-neutral-600">{tUnit("code")}s</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: tNav("home"), href: `/${locale}` },
+          { label: tNav("projects"), href: `/${locale}/projects` },
+          { label: project.name, href: `/${locale}/projects/${project.slug}` },
+          { label: "Unit" },
+        ]}
+        className="mb-6"
+      />
 
       {/* Header */}
       <div className="mb-6">

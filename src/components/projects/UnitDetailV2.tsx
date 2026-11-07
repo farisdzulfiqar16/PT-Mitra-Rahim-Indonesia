@@ -14,6 +14,8 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { Breadcrumb } from "@/components/layout/Breadcrumb";
+import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
 import { formatRupiah } from "@/lib/utils";
 import type { Project, PropertyUnit, UnitStatus } from "@/types";
 
@@ -21,8 +23,8 @@ interface UnitDetailV2Props {
   locale: string;
   project: Project;
   unit: PropertyUnit;
-  waDisabled: boolean;
-  waUrl: string | undefined;
+  waDisabled?: boolean;
+  waUrl?: string | undefined;
   labels: {
     home: string;
     projects: string;
@@ -46,7 +48,7 @@ interface UnitDetailV2Props {
   };
 }
 
-export function UnitDetailV2({ locale, project, unit, waDisabled, waUrl, labels }: UnitDetailV2Props) {
+export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Props) {
   const statusLabel =
     unit.status === "available" ? labels.available
     : unit.status === "process" ? labels.process
@@ -58,17 +60,16 @@ export function UnitDetailV2({ locale, project, unit, waDisabled, waUrl, labels 
       {/* Page header — cream */}
       <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <nav className="mb-3 flex items-center gap-1.5 text-xs text-neutral-500" aria-label="Breadcrumb">
-            <Link href={`/${locale}`} className="hover:text-primary-700 transition-colors">{labels.home}</Link>
-            <span aria-hidden="true">›</span>
-            <Link href={`/${locale}/projects`} className="hover:text-primary-700 transition-colors">{labels.projects}</Link>
-            <span aria-hidden="true">›</span>
-            <Link href={`/${locale}/projects/${project.slug}`} className="hover:text-primary-700 transition-colors">{project.name}</Link>
-            <span aria-hidden="true">›</span>
-            <Link href={`/${locale}/projects/${project.slug}/units`} className="hover:text-primary-700 transition-colors">{labels.units}</Link>
-            <span aria-hidden="true">›</span>
-            <span className="text-neutral-700 font-medium">{unit.unitCode}</span>
-          </nav>
+          <Breadcrumb
+            items={[
+              { label: labels.home, href: `/${locale}` },
+              { label: labels.projects, href: `/${locale}/projects` },
+              { label: project.name, href: `/${locale}/projects/${project.slug}` },
+              { label: labels.units, href: `/${locale}/projects/${project.slug}/units` },
+              { label: unit.unitCode },
+            ]}
+            className="mb-3"
+          />
         </div>
       </div>
 
@@ -145,24 +146,18 @@ export function UnitDetailV2({ locale, project, unit, waDisabled, waUrl, labels 
 
             {/* CTA buttons */}
             <div className="flex flex-col gap-3">
-              {waDisabled ? (
-                <div
-                  className="flex items-center justify-center gap-2 rounded-xl bg-neutral-200 px-6 py-3.5 text-sm font-semibold text-neutral-400 min-h-[48px] cursor-not-allowed"
-                  aria-disabled="true"
-                  title={labels.waDisabled}
-                >
-                  💬 {labels.contactWhatsApp}
-                </div>
-              ) : (
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-6 py-3.5 text-sm font-semibold text-white shadow hover:bg-whatsapp-hover transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-whatsapp focus-visible:ring-offset-2"
-                >
-                  💬 {labels.contactWhatsApp}
-                </a>
-              )}
+              <WhatsAppButton
+                locale={locale as "id" | "en"}
+                context="unit"
+                projectFullName={project.fullName}
+                unitCode={unit.unitCode}
+                variant="primary"
+                fullWidth
+                disabledMessage={labels.waDisabled}
+                className="rounded-xl min-h-[48px] text-sm"
+              >
+                {labels.contactWhatsApp}
+              </WhatsAppButton>
 
               <Link
                 href={`/${locale}/projects/${project.slug}?unit=${unit.unitCode}`}
