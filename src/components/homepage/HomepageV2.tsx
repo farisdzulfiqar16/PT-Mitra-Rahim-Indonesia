@@ -17,9 +17,21 @@
  */
 
 import Link from "next/link";
+import {
+  Check,
+  MapPin,
+  Search,
+  Handshake,
+  Compass,
+  ClipboardList,
+  Video,
+  ArrowRight,
+} from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Card } from "@/components/ui/Card";
+import { ProjectGallery } from "@/components/media/ProjectGallery";
+import { ProjectVideoPlayer } from "@/components/media/ProjectVideoPlayer";
 import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
 import { siteConfig } from "@/config/site";
 import type { Project } from "@/types";
@@ -54,6 +66,18 @@ interface HomepageV2Props {
     videoTitle: string;
     readyToExplore: string;
     ctaExploreAll: string;
+    trustBadge1: string;
+    trustBadge2: string;
+    trustBadge3: string;
+    dehirSubtitle: string;
+    pabuaranSubtitle: string;
+    featuresSubtitle: string;
+    explorationBadge: string;
+    ctaExploreDehir: string;
+    ctaViewUnits: string;
+    sitePlanCardLabel: string;
+    sitePlanCardDesc: string;
+    closingCtaDesc: string;
   };
 }
 
@@ -119,16 +143,16 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
               {/* Portal Quick Trust Badges */}
               <div className="mt-8 pt-6 border-t border-neutral-300/60 flex flex-wrap items-center gap-6 text-xs text-neutral-500 font-medium">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-primary-700 font-bold">✓</span>
-                  <span>Informasi Kavling Transparan</span>
+                  <Check className="h-4 w-4 text-primary-700 stroke-[2.5]" aria-hidden="true" />
+                  <span>{t.trustBadge1}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-primary-700 font-bold">✓</span>
-                  <span>Eksplorasi Denah & Site Plan</span>
+                  <Check className="h-4 w-4 text-primary-700 stroke-[2.5]" aria-hidden="true" />
+                  <span>{t.trustBadge2}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-primary-700 font-bold">✓</span>
-                  <span>Konsultasi Bebas Biaya</span>
+                  <Check className="h-4 w-4 text-primary-700 stroke-[2.5]" aria-hidden="true" />
+                  <span>{t.trustBadge3}</span>
                 </div>
               </div>
             </div>
@@ -167,9 +191,10 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
           </div>
           <Link
             href={`/${locale}/projects`}
-            className="inline-flex items-center gap-1 text-sm font-semibold text-primary-700 hover:text-primary-800 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700 hover:text-primary-800 transition-colors"
           >
-            {t.ctaExploreAll} <span aria-hidden="true">→</span>
+            <span>{t.ctaExploreAll}</span>
+            <ArrowRight className="h-4 w-4 stroke-[2]" aria-hidden="true" />
           </Link>
         </div>
 
@@ -185,8 +210,9 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
             </div>
             <div className="flex flex-1 flex-col p-6 sm:p-7">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary-700">
-                  📍 {dehir.location.city}, {dehir.location.province}
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary-700 flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5 shrink-0 stroke-[1.75]" aria-hidden="true" />
+                  <span>{dehir.location.city}, {dehir.location.province}</span>
                 </span>
                 <Badge variant="available">{t.projectActive}</Badge>
               </div>
@@ -201,14 +227,14 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
 
               <div className="mt-6 pt-5 border-t border-neutral-100 flex items-center justify-between">
                 <span className="text-xs text-neutral-400 font-medium">
-                  Kavling Siap Bangun & Hunian
+                  {t.dehirSubtitle}
                 </span>
                 <Link
                   href={`/${locale}/projects/dehir`}
                   className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 hover:text-primary-800 transition-colors min-h-[36px]"
                 >
-                  {t.viewDetail}
-                  <span aria-hidden="true">→</span>
+                  <span>{t.viewDetail}</span>
+                  <ArrowRight className="h-4 w-4 stroke-[2]" aria-hidden="true" />
                 </Link>
               </div>
             </div>
@@ -225,8 +251,9 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
             </div>
             <div className="flex flex-1 flex-col p-6 sm:p-7">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                  📍 {pabuaran.location.city}, {pabuaran.location.province}
+                <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500 flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5 shrink-0 stroke-[1.75]" aria-hidden="true" />
+                  <span>{pabuaran.location.city}, {pabuaran.location.province}</span>
                 </span>
                 <Badge variant="coming-soon">{t.projectComingSoon}</Badge>
               </div>
@@ -241,14 +268,14 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
 
               <div className="mt-6 pt-5 border-t border-neutral-100 flex items-center justify-between">
                 <span className="text-xs text-neutral-400 font-medium">
-                  Tahap Persiapan
+                  {t.pabuaranSubtitle}
                 </span>
                 <Link
                   href={`/${locale}/projects/pabuaran`}
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-600 hover:text-neutral-900 transition-colors min-h-[36px]"
                 >
-                  {t.viewInfo}
-                  <span aria-hidden="true">→</span>
+                  <span>{t.viewInfo}</span>
+                  <ArrowRight className="h-4 w-4 stroke-[2]" aria-hidden="true" />
                 </Link>
               </div>
             </div>
@@ -264,14 +291,14 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
               {t.featuresTitle}
             </h2>
             <p className="mt-2 text-sm text-neutral-500">
-              Komitmen kami dalam menghadirkan informasi properti yang andal, jelas, dan transparan.
+              {t.featuresSubtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <Card className="p-7 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-700 text-2xl">
-                🔎
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-700 shadow-2xs">
+                <Search className="h-6 w-6 stroke-[1.75]" aria-hidden="true" />
               </div>
               <h3 className="text-base font-bold text-neutral-900">
                 {t.feature1Title}
@@ -282,8 +309,8 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
             </Card>
 
             <Card className="p-7 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-700 text-2xl">
-                📍
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-700 shadow-2xs">
+                <MapPin className="h-6 w-6 stroke-[1.75]" aria-hidden="true" />
               </div>
               <h3 className="text-base font-bold text-neutral-900">
                 {t.feature2Title}
@@ -294,8 +321,8 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
             </Card>
 
             <Card className="p-7 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-700 text-2xl">
-                🤝
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-700 shadow-2xs">
+                <Handshake className="h-6 w-6 stroke-[1.75]" aria-hidden="true" />
               </div>
               <h3 className="text-base font-bold text-neutral-900">
                 {t.feature3Title}
@@ -314,7 +341,7 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center">
             <div className="space-y-4">
               <span className="text-xs font-bold uppercase tracking-wider text-primary-700">
-                Eksplorasi Mendalam
+                {t.explorationBadge}
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">
                 {t.explorationTitle}
@@ -325,15 +352,17 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
               <div className="pt-2 flex flex-wrap gap-3">
                 <Link
                   href={`/${locale}/projects/dehir`}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary-700 px-6 py-3 text-xs sm:text-sm font-semibold text-white hover:bg-primary-600 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary-700 px-6 py-3 text-xs sm:text-sm font-semibold text-white hover:bg-primary-600 transition-colors shadow-xs min-h-[44px]"
                 >
-                  🗺️ Buka Eksplorasi Proyek Dehir
+                  <Compass className="h-4 w-4 stroke-[2]" aria-hidden="true" />
+                  <span>{t.ctaExploreDehir}</span>
                 </Link>
                 <Link
                   href={`/${locale}/projects/dehir/units`}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-5 py-3 text-xs sm:text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-5 py-3 text-xs sm:text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors min-h-[44px]"
                 >
-                  📋 Lihat Daftar Unit Kavling
+                  <ClipboardList className="h-4 w-4 stroke-[2]" aria-hidden="true" />
+                  <span>{t.ctaViewUnits}</span>
                 </Link>
               </div>
             </div>
@@ -342,8 +371,8 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
               <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
                 <Placeholder
                   type="map"
-                  label="Site Plan & Tata Letak Kavling"
-                  description="Tersedia di dalam halaman eksplorasi proyek Dehir"
+                  label={t.sitePlanCardLabel}
+                  description={t.sitePlanCardDesc}
                   className="aspect-[16/10] w-full rounded-xl"
                 />
               </div>
@@ -355,39 +384,22 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
       {/* ── 5. Dokumentasi & Galeri ───────────────────────────────────── */}
       <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          {/* Galeri Visual */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-neutral-900">
-              🖼️ {t.galleryTitle}
-            </h3>
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="overflow-hidden rounded-xl border border-neutral-200">
-                <Placeholder type="image" label="Foto Lokasi 1" className="aspect-[4/3] transition-transform duration-300 hover:scale-105" />
-              </div>
-              <div className="overflow-hidden rounded-xl border border-neutral-200">
-                <Placeholder type="image" label="Foto Lokasi 2" className="aspect-[4/3] transition-transform duration-300 hover:scale-105" />
-              </div>
-              <div className="overflow-hidden rounded-xl border border-neutral-200">
-                <Placeholder type="image" label="Foto Akses Kawasan" className="aspect-[4/3] transition-transform duration-300 hover:scale-105" />
-              </div>
-              <div className="overflow-hidden rounded-xl border border-neutral-200">
-                <Placeholder type="image" label="Foto Masterplan" className="aspect-[4/3] transition-transform duration-300 hover:scale-105" />
-              </div>
-            </div>
-          </div>
+          {/* Galeri Visual Resmi */}
+          <ProjectGallery
+            title={t.galleryTitle}
+            locale={locale}
+          />
 
-          {/* Video Dokumentasi */}
+          {/* Video Dokumentasi Resmi */}
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-neutral-900">
-              🎬 {t.videoTitle}
+            <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
+              <Video className="h-5 w-5 text-primary-700 stroke-[1.75]" aria-hidden="true" />
+              <span>{t.videoTitle}</span>
             </h3>
-            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white p-2 shadow-xs">
-              <Placeholder
-                type="video"
-                label={t.videoTitle}
-                className="w-full aspect-[16/10] rounded-xl"
-              />
-            </div>
+            <ProjectVideoPlayer
+              title={t.videoTitle}
+              locale={locale}
+            />
           </div>
         </div>
       </section>
@@ -399,7 +411,7 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
             {t.readyToExplore}
           </h2>
           <p className="text-sm sm:text-base text-primary-100 max-w-xl mx-auto leading-relaxed">
-            Dapatkan informasi lengkap kavling dan rencanakan kunjungan lokasi bersama tim marketing resmi kami.
+            {t.closingCtaDesc}
           </p>
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link

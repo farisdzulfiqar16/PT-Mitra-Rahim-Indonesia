@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/Badge";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
+import { Building } from "lucide-react";
 import type { Project } from "@/types";
 
 export interface ComingSoonTeaserProps {
@@ -63,8 +64,8 @@ export function ComingSoonTeaser({
       {/* Main Teaser Body */}
       <div className="mx-auto flex min-h-[50vh] w-full max-w-3xl flex-col items-center justify-center px-4 py-16 text-center">
         <div className="rounded-2xl border border-neutral-200 bg-white p-8 sm:p-12 shadow-sm w-full space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-2xl">
-            🏗️
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 text-amber-700 shadow-2xs border border-amber-200/60">
+            <Building className="h-8 w-8 stroke-[1.75]" aria-hidden="true" />
           </div>
 
           <div className="space-y-2">

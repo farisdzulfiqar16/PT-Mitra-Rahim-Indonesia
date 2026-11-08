@@ -1,4 +1,5 @@
 import React from "react";
+import { MessageCircle } from "lucide-react";
 import {
   siteConfig,
   buildWhatsAppUrl,
@@ -33,7 +34,7 @@ export interface WhatsAppButtonProps {
   ariaLabel?: string;
   /** Apakah lebar 100% */
   fullWidth?: boolean;
-  /** Tampilkan icon 💬 */
+  /** Tampilkan icon WhatsApp */
   showIcon?: boolean;
 }
 
@@ -116,9 +117,21 @@ export function WhatsAppButton({
       ? "Contact via WhatsApp"
       : "Hubungi via WhatsApp";
 
+  const iconSizeClass =
+    variant === "compact"
+      ? "h-3.5 w-3.5 mr-1.5"
+      : variant === "iconOnly"
+      ? "h-5 w-5"
+      : "h-4 w-4 mr-2";
+
   const content = (
     <>
-      {showIcon && <span aria-hidden="true" className={variant === "compact" ? "mr-1.5" : "mr-2"}>💬</span>}
+      {showIcon && (
+        <MessageCircle
+          className={cn(iconSizeClass, "shrink-0 stroke-[2.25]")}
+          aria-hidden="true"
+        />
+      )}
       {variant !== "iconOnly" && (children ?? defaultLabel)}
     </>
   );

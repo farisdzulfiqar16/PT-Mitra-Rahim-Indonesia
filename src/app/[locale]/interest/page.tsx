@@ -43,12 +43,14 @@ export async function generateMetadata({
 }
 
 /**
- * Halaman Formulir Minat — Khusus untuk Proyek Celestia Dehir (Jatiluhur).
+ * Halaman Formulir Minat & Konsultasi — Portal Properti Celestia.
  *
- * Memenuhi spesifikasi Task 16:
- * - Mengumpulkan preferensi awal calon pembeli (kavling saja vs kavling+bangunan).
- * - Tidak ada proses booking atau pembayaran di tahap ini.
- * - Mengirimkan data minat langsung via WhatsApp tanpa penyimpanan backend.
+ * Memenuhi spesifikasi Batch 1:
+ * - Tidak terikat permanen pada proyek tunggal (mendukung Dehir, Pabuaran, dan Umum).
+ * - Menerima parameter URL (?project=...&unit=...) secara otomatis.
+ * - Pemilihan kategori topik konsultasi (harga, ketersediaan, survei, dsb).
+ * - Kode kavling opsional dengan disclaimer transparan (bukan booking/reservasi).
+ * - Pengiriman melalui WhatsApp resmi tanpa backend/database.
  */
 export default async function InterestPage({
   params,
@@ -62,7 +64,7 @@ export default async function InterestPage({
   const tNav = await getTranslations("nav");
   const tWa = await getTranslations("whatsapp");
 
-  // Ambil kode kavling resmi Dehir dari service layer
+  // Ambil kode kavling resmi Dehir dari service layer untuk opsi referensi
   const dehirUnits = await getUnitsByProject("dehir");
   const availableUnitCodes = dehirUnits.map((u) => u.unitCode);
 
@@ -78,16 +80,11 @@ export default async function InterestPage({
             ]}
             className="mb-3"
           />
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
-              {tForm("title")}
-            </h1>
-            <span className="inline-flex items-center rounded-full bg-primary-100 px-3 py-0.5 text-xs font-semibold text-primary-800">
-              Jatiluhur
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-600 max-w-2xl leading-relaxed">
-            Sampaikan preferensi kavling dan tipe bangunan yang Anda minati. Tim pemasaran kami akan menindaklanjuti untuk konfirmasi detail dan konsultasi lebih lanjut.
+          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+            {tForm("title")}
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-neutral-600 max-w-2xl leading-relaxed">
+            {tForm("subtitle")}
           </p>
         </div>
       </div>
@@ -99,23 +96,37 @@ export default async function InterestPage({
           availableUnitCodes={availableUnitCodes}
           labels={{
             title: tForm("title"),
-            propertyTypeRequired: tForm("propertyTypeRequired"),
+            subtitle: tForm("subtitle"),
+            projectSectionTitle: tForm("projectSectionTitle"),
+            projectSelectLabel: tForm("projectSelectLabel"),
+            projectDehir: tForm("projectDehir"),
+            projectPabuaran: tForm("projectPabuaran"),
+            projectGeneral: tForm("projectGeneral"),
+            consultationCategoryTitle: tForm("consultationCategoryTitle"),
+            consultationCategorySubtitle: tForm("consultationCategorySubtitle"),
+            catPrice: tForm("catPrice"),
+            catAvailability: tForm("catAvailability"),
+            catSurvey: tForm("catSurvey"),
+            catBuilding: tForm("catBuilding"),
+            catDesign: tForm("catDesign"),
+            catOther: tForm("catOther"),
+            preferencesTitle: tForm("preferencesTitle"),
+            propertyTypeLabel: tForm("propertyTypeLabel"),
             kavlingOnly: tForm("kavlingOnly"),
             kavlingBuilding: tForm("kavlingBuilding"),
-            kavlingCode: tForm("kavlingCode"),
+            propertyUndecided: tForm("propertyUndecided"),
+            kavlingCodeLabel: tForm("kavlingCodeLabel"),
+            kavlingCodePlaceholder: tForm("kavlingCodePlaceholder"),
             kavlingCodeNote: tForm("kavlingCodeNote"),
-            buildingType: tForm("buildingType"),
+            buildingTypeLabel: tForm("buildingTypeLabel"),
             type1Lantai: tForm("type1Lantai"),
             type1LantaiPromo: tForm("type1LantaiPromo"),
             undecided: tForm("undecided"),
-            additionalQuestions: tForm("additionalQuestions"),
+            clientDetailsTitle: tForm("clientDetailsTitle"),
             name: tForm("name"),
-            usagePurpose: tForm("usagePurpose"),
-            usageResidential: tForm("usageResidential"),
-            usageOffice: tForm("usageOffice"),
-            usageOther: tForm("usageOther"),
-            modificationRequest: tForm("modificationRequest"),
+            namePlaceholder: tForm("namePlaceholder"),
             notes: tForm("notes"),
+            notesPlaceholder: tForm("notesPlaceholder"),
             submitViaWhatsApp: tForm("submitViaWhatsApp"),
             directWhatsApp: tForm("directWhatsApp"),
             clientNotice: tForm("clientNotice"),

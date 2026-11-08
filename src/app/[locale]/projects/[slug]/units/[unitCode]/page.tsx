@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ClipboardList } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
@@ -13,7 +14,13 @@ import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
 import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
 import { formatRupiah } from "@/lib/utils";
 import { UnitDetailV2 } from "@/components/projects/UnitDetailV2";
-import { getProjectBySlug, getProjectBySlugSync, getUnitByCode } from "@/services";
+import {
+  getAllProjectsSync,
+  getProjectBySlug,
+  getProjectBySlugSync,
+  getUnitByCode,
+  getUnitsByProjectSync,
+} from "@/services";
 import type { UnitStatus } from "@/types";
 
 /** OG locale mapping */
@@ -21,6 +28,22 @@ const OG_LOCALE: Record<string, string> = {
   id: "id_ID",
   en: "en_US",
 };
+
+/** Generate static params untuk seluruh kombinasi locale × slug × unitCode */
+export function generateStaticParams() {
+  const allProjects = getAllProjectsSync();
+  const locales = ["id", "en"];
+  return locales.flatMap((locale) =>
+    allProjects.flatMap((project) => {
+      const units = getUnitsByProjectSync(project.id);
+      return units.map((u) => ({
+        locale,
+        slug: project.slug,
+        unitCode: u.unitCode,
+      }));
+    })
+  );
+}
 
 export async function generateMetadata({
   params,
@@ -80,6 +103,7 @@ export default async function UnitDetailPage({
   const tStatus = await getTranslations("status");
   const tCta = await getTranslations("cta");
   const tWa = await getTranslations("whatsapp");
+  const tProject = await getTranslations("project");
 
   const project = await getProjectBySlug(slug);
 
@@ -112,14 +136,29 @@ export default async function UnitDetailPage({
           type: tUnit("type"),
           projectLabel: tUnit("project"),
           landArea: tUnit("landArea"),
+          buildingArea: tUnit("buildingArea"),
           dimensions: tUnit("dimensions"),
+          buildingType: tUnit("buildingType"),
+          bedrooms: tUnit("bedrooms"),
+          bathrooms: tUnit("bathrooms"),
+          carport: tUnit("carport"),
+          yes: tUnit("yes"),
+          no: tUnit("no"),
           price: tUnit("price"),
           status: tUnit("status"),
           contactForPrice: tUnit("contactForPrice"),
           photoPlaceholder: tUnit("photoPlaceholder"),
           viewOnSitePlan: tUnit("viewOnSitePlan"),
           contactWhatsApp: tCta("contactWhatsApp"),
+          interestForm: tCta("interestForm"),
           waDisabled: tWa("disabled"),
+          unconfirmedNotice: tUnit("unconfirmedNotice"),
+          backToUnits: locale === "en" ? "Back to Unit List" : "Kembali ke Daftar Unit",
+          kavlingMeasurementDisclaimer: tProject("kavlingMeasurementDisclaimer"),
+          buildingOptionsNotice: tProject("buildingOptionsNotice"),
+          brochureContactTitle: tProject("brochureContactTitle"),
+          brochureContactNotice: tProject("brochureContactNotice"),
+          temporaryContactBadge: tProject("temporaryContactBadge"),
         }}
       />
     );
@@ -211,7 +250,7 @@ export default async function UnitDetailPage({
               variant="primary"
               disabledMessage={tWa("disabled")}
             >
-              💬 {tCta("contactWhatsApp")}
+              {tCta("contactWhatsApp")}
             </WhatsAppButton>
 
             <Link
@@ -219,6 +258,14 @@ export default async function UnitDetailPage({
               className="flex items-center justify-center rounded-lg border border-primary-300 bg-primary-50 px-6 py-3 text-sm font-medium text-primary-700 hover:bg-primary-100 transition-colors min-h-[44px]"
             >
               {tUnit("viewOnSitePlan")}
+            </Link>
+
+            <Link
+              href={`/${locale}/interest?project=${project.slug}&unit=${unit.unitCode}`}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-white px-6 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors min-h-[44px]"
+            >
+              <ClipboardList className="w-4 h-4 stroke-[2]" aria-hidden="true" />
+              <span>{tCta("interestForm")}</span>
             </Link>
           </div>
         </div>

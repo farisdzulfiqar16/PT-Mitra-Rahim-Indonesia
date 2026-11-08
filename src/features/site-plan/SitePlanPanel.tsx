@@ -9,6 +9,7 @@
  */
 
 import Link from "next/link";
+import { Map } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { InteractiveSitePlan } from "./InteractiveSitePlan";
@@ -76,7 +77,10 @@ export function SitePlanPanel({
 }: SitePlanPanelProps) {
   return (
     <section aria-label={title}>
-      <h2 className="mb-3 text-lg font-semibold text-neutral-900">📐 {title}</h2>
+      <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-neutral-900">
+        <Map className="w-5 h-5 text-primary-700 stroke-[2]" aria-hidden="true" />
+        <span>{title}</span>
+      </h2>
 
       {/* Kondisi 1: Denah resmi belum tersedia */}
       {!isAvailable && (
@@ -94,6 +98,8 @@ export function SitePlanPanel({
           units={units}
           highlightedUnitCode={highlightedUnitCode}
           ariaLabel={title}
+          projectSlug={projectSlug}
+          sitePlanUrl={`/site-plan/${projectSlug}.svg`}
         />
       )}
 

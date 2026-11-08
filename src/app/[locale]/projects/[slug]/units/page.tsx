@@ -10,7 +10,12 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { UnitCatalogV2 } from "@/components/projects/UnitCatalogV2";
-import { getProjectBySlug, getProjectBySlugSync, getUnitsByProject } from "@/services";
+import {
+  getAllProjectsSync,
+  getProjectBySlug,
+  getProjectBySlugSync,
+  getUnitsByProject,
+} from "@/services";
 import type { UnitStatus } from "@/types";
 
 /** OG locale mapping */
@@ -18,6 +23,16 @@ const OG_LOCALE: Record<string, string> = {
   id: "id_ID",
   en: "en_US",
 };
+
+/** Generate static params untuk semua kombinasi locale × slug proyek */
+export function generateStaticParams() {
+  const allProjects = getAllProjectsSync();
+  const slugs = allProjects.map((p) => p.slug);
+  const locales = ["id", "en"];
+  return locales.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug }))
+  );
+}
 
 export async function generateMetadata({
   params,
@@ -27,7 +42,7 @@ export async function generateMetadata({
   const { locale, slug } = await params;
 
   const project = getProjectBySlugSync(slug);
-  if (!project || project.status !== "active") return {};
+  if (!project) return {};
 
   const t = await getTranslations({ locale, namespace: "meta" });
   const ogLocale = OG_LOCALE[locale] ?? "id_ID";
@@ -73,10 +88,11 @@ export default async function UnitCatalogPage({
   const tEmpty = await getTranslations("empty");
   const tCta = await getTranslations("cta");
   const tWa = await getTranslations("whatsapp");
+  const tProject = await getTranslations("project");
 
   const project = await getProjectBySlug(slug);
 
-  if (!project || project.status !== "active") {
+  if (!project) {
     notFound();
   }
 
@@ -97,11 +113,17 @@ export default async function UnitCatalogPage({
           sold: tStatus("sold"),
           unknown: tStatus("unknown"),
           noUnits: tEmpty("noUnits"),
+          projectUnitsPreparation: tEmpty("projectUnitsPreparation"),
           viewDetail: tCta("viewDetail"),
           contactForPrice: tUnit("contactForPrice"),
           contactWhatsApp: tCta("contactWhatsApp"),
           waDisabled: tWa("disabled"),
           filterAll: locale === "en" ? "All" : "Semua",
+          kavlingMeasurementDisclaimer: tProject("kavlingMeasurementDisclaimer"),
+          brochureContactTitle: tProject("brochureContactTitle"),
+          brochureContactNotice: tProject("brochureContactNotice"),
+          temporaryContactBadge: tProject("temporaryContactBadge"),
+          projectAddressLabel: tProject("projectAddressLabel"),
         }}
       />
     );

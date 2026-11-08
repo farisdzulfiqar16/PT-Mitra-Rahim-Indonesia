@@ -1,0 +1,119 @@
+[
+  {
+    "unitCode": "A1",
+    "projectId": "dehir",
+    "landArea": 86,
+    "historicalPricing": {
+      "kavlingOnly": 301000000,
+      "packageType46": 473000000,
+      "kprType46Monthly": 2892827,
+      "packageType30": 429000000,
+      "kprType30Monthly": 2631010,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "A2",
+    "projectId": "dehir",
+    "landArea": 90,
+    "historicalPricing": {
+      "kavlingOnly": 312970000,
+      "packageType46": 488970000,
+      "kprType46Monthly": 2964054,
+      "packageType30": 440970000,
+      "kprType30Monthly": 2702237,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "A3",
+    "projectId": "dehir",
+    "landArea": 94,
+    "historicalPricing": {
+      "kavlingOnly": 326690000,
+      "packageType46": 498690000,
+      "kprType46Monthly": 3045693,
+      "packageType30": 454690000,
+      "kprType30Monthly": 2783876,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "A4",
+    "projectId": "dehir",
+    "landArea": 98,
+    "historicalPricing": {
+      "kavlingOnly": 340410000,
+      "packageType46": 512410000,
+      "kprType46Monthly": 3127332,
+      "packageType30": 468410000,
+      "kprType30Monthly": 2865515,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "B1",
+    "projectId": "dehir",
+    "landArea": 73,
+    "historicalPricing": {
+      "kavlingOnly": 256420000,
+      "packageType46": 428420000,
+      "kprType46Monthly": 2627581,
+      "packageType30": 384420000,
+      "kprType30Monthly": 2365764,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "B2",
+    "projectId": "dehir",
+    "landArea": 76,
+    "historicalPricing": {
+      "kavlingOnly": 266710000,
+      "packageType46": 438710000,
+      "kprType46Monthly": 2688757,
+      "packageType30": 394710000,
+      "kprType30Monthly": 2426940,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "B3",
+    "projectId": "dehir",
+    "landArea": 78,
+    "historicalPricing": {
+      "kavlingOnly": 273570000,
+      "packageType46": 445570000,
+      "kprType46Monthly": 2729541,
+      "packageType30": 401570000,
+      "kprType30Monthly": 2467724,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "B4",
+    "projectId": "dehir",
+    "landArea": 81,
+    "historicalPricing": {
+      "kavlingOnly": 283860000,
+      "packageType46": 455860000,
+      "kprType46Monthly": 2790717,
+      "packageType30": 411860000,
+      "kprType30Monthly": 2528900,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  },
+  {
+    "unitCode": "B5",
+    "projectId": "dehir",
+    "landArea": 84,
+    "historicalPricing": {
+      "kavlingOnly": 294150000,
+      "packageType46": 466150000,
+      "kprType46Monthly": 2851893,
+      "packageType30": 422150000,
+      "kprType30Monthly": 2590076,
+      "source": "Brosur Pemasaran Dehir (Historis)"
+    }
+  }
+]

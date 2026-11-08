@@ -5,8 +5,8 @@
  * metadata, URL, dan pengaturan kontak.
  *
  * TODO (konfirmasi ke perusahaan):
- *   - Nomor WhatsApp yang benar (saat ini dari brosur Dehir)
- *   - URL domain produksi
+ *   - Nomor WhatsApp yang benar (saat ini masih placeholder)
+ *   - Domain produksi resmi
  *   - Nama resmi perusahaan dan tagline
  */
 
@@ -65,8 +65,18 @@ export const siteConfig = {
    */
   tagline: "Temukan Hunian Impian Anda",
 
-  /** URL produksi — ganti setelah domain tersedia */
-  url: "https://celestia.id",
+  /**
+   * URL produksi — PLACEHOLDER, belum dikonfirmasi Owner.
+   *
+   * Dikosongkan ("") agar tidak ada URL asumsi yang digunakan sebagai canonical.
+   * Sumber kebenaran untuk canonical dan sitemap adalah seoConfig.siteUrl.
+   *
+   * TODO: konfirmasi domain resmi ke Owner sebelum publikasi, lalu:
+   *   1. Set nilai ini ke domain resmi (misal: "https://celestia.id")
+   *   2. Set seoConfig.siteUrl ke nilai yang sama
+   *   3. Set seoConfig.indexingEnabled = true
+   */
+  url: "" as string,
 
   /** Bahasa default website */
   defaultLocale: "id" as const,
@@ -76,12 +86,20 @@ export const siteConfig = {
 
   contact: {
     /**
-     * Nomor WhatsApp untuk tombol CTA.
-     * Format: kode negara tanpa + diikuti nomor (misal: "628123456789")
-     * TODO: konfirmasi nomor WhatsApp resmi ke perusahaan dari brosur Dehir.
-     * Saat ini masih placeholder — jika mengandung karakter X, CTA dinonaktifkan.
+     * Nomor WhatsApp untuk seluruh tombol Call-to-Action (CTA) marketing Celestia.
+     * Format internasional: kode negara tanpa tanda + atau spasi (6282299237825).
+     *
+     * Sumber nomor: Brosur pemasaran Dehir. Status: digunakan berdasarkan data yang tersedia,
+     * menunggu konfirmasi terbaru dari Owner.
+     * Nomor sumber: 0822-9923-7825.
      */
-    whatsappNumber: "62XXXXXXXXXX",
+    whatsappNumber: "6282299237825",
+
+    /**
+     * Nomor WhatsApp pemasaran dari brosur Dehir (format tampilan lokal).
+     * Sumber: Brosur pemasaran Dehir. Status: digunakan berdasarkan data yang tersedia.
+     */
+    brochureCandidateNumber: "0822-9923-7825",
 
     /** Pesan WhatsApp untuk homepage — locale id */
     whatsappMessageId: "Halo, saya ingin mengetahui lebih lanjut tentang proyek Celestia.",
@@ -139,6 +157,77 @@ export function buildUnitWhatsAppMessage(unitCode: string, projectFullName: stri
   return template
     .replace("{unitCode}", unitCode)
     .replace("{project}", projectFullName);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Location Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Helper: format alamat lengkap proyek dari objek ProjectLocation.
+ * Menghasilkan string alamat tunggal dan terpusat.
+ */
+export function formatProjectAddress(location?: {
+  streetAddress?: string;
+  subDistrict?: string;
+  district?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  country?: string;
+}): string {
+  if (!location) return "";
+  return [
+    location.streetAddress,
+    location.subDistrict,
+    location.district,
+    location.city,
+    location.province,
+    location.postalCode,
+    location.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+/**
+ * Helper: buat URL Google Maps Search dari alamat proyek.
+ *
+ * Mengikuti spesifikasi Wave 6B.3:
+ * - Menggunakan Google Maps Search URL berdasarkan alamat lengkap jika koordinat resmi belum tersedia.
+ * - Pola URL: https://www.google.com/maps/search/?api=1&query=ALAMAT_TERENCODE
+ * - Jika googleMapsUrl sudah terdaftar atau coordinates tersedia, prioritaskan URL/koordinat tersebut.
+ * - Mengembalikan undefined jika alamat streetAddress belum tersedia (misal: proyek persiapan seperti Pabuaran).
+ */
+export function buildGoogleMapsUrl(location?: {
+  streetAddress?: string;
+  subDistrict?: string;
+  district?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  country?: string;
+  coordinates?: { lat: number; lng: number };
+  googleMapsUrl?: string;
+}): string | undefined {
+  if (!location) return undefined;
+
+  if (location.googleMapsUrl) {
+    return location.googleMapsUrl;
+  }
+
+  if (location.coordinates?.lat && location.coordinates?.lng) {
+    return `https://www.google.com/maps/search/?api=1&query=${location.coordinates.lat},${location.coordinates.lng}`;
+  }
+
+  if (!location.streetAddress) {
+    return undefined;
+  }
+
+  const fullAddress = formatProjectAddress(location);
+  if (!fullAddress) return undefined;
+
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

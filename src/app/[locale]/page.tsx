@@ -104,6 +104,18 @@ export default async function HomePage({
           videoTitle: t("videoTitle"),
           readyToExplore: t("readyToExplore"),
           ctaExploreAll: t("ctaExploreAll"),
+          trustBadge1: t("trustBadge1"),
+          trustBadge2: t("trustBadge2"),
+          trustBadge3: t("trustBadge3"),
+          dehirSubtitle: t("dehirSubtitle"),
+          pabuaranSubtitle: t("pabuaranSubtitle"),
+          featuresSubtitle: t("featuresSubtitle"),
+          explorationBadge: t("explorationBadge"),
+          ctaExploreDehir: t("ctaExploreDehir"),
+          ctaViewUnits: t("ctaViewUnits"),
+          sitePlanCardLabel: t("sitePlanCardLabel"),
+          sitePlanCardDesc: t("sitePlanCardDesc"),
+          closingCtaDesc: t("closingCtaDesc"),
         }}
       />
     );

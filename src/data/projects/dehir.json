@@ -1,1 +1,112 @@
-{"id": "dehir", "name": "Dehir", "fullName": "Celestia Jatiluhur", "shortDescription": "Proyek properti Celestia di kawasan Jatiluhur.", "description": "Celestia Jatiluhur (Dehir) adalah proyek properti dari PT Mitra Rahim Indonesia yang berlokasi di kawasan Jatiluhur. Informasi lengkap mengenai fasilitas, legalitas, dan spesifikasi proyek akan dilengkapi setelah konfirmasi perusahaan.", "slug": "dehir", "status": "active", "location": {"city": "Jatiluhur", "province": "Jawa Barat"}}
+{
+  "id": "dehir",
+  "name": "Dehir",
+  "fullName": "Celestia Jatiluhur",
+  "shortDescription": "Hunian modern untuk keluarga masa kini di kawasan Jatiluhur, Jatiasih, Kota Bekasi.",
+  "description": "Celestia Jatiluhur (Dehir) adalah proyek properti dari PT Mitra Rahim Indonesia yang menawarkan rumah tapak satu lantai dan tanah kavling. Berlokasi strategis di Jl. H. Dehir, Jatiluhur, Kecamatan Jatiasih, Kota Bekasi, proyek ini dirancang sebagai hunian modern untuk keluarga masa kini dengan akses dekat ke fasilitas pendidikan, pusat perbelanjaan, dan gerbang tol.",
+  "slug": "dehir",
+  "status": "active",
+  "marketingTagline": "Hunian modern untuk keluarga masa kini",
+  "propertyTypes": [
+    "Rumah tapak satu lantai",
+    "Tanah kavling"
+  ],
+  "location": {
+    "streetAddress": "Jl. H. Dehir, RT.001/RW.002",
+    "subDistrict": "Kelurahan Jatiluhur",
+    "district": "Kecamatan Jatiasih",
+    "city": "Kota Bekasi",
+    "province": "Jawa Barat",
+    "postalCode": "17425",
+    "country": "Indonesia",
+    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jl.+H.+Dehir%2C+RT.001%2FRW.002%2C+Kelurahan+Jatiluhur%2C+Kecamatan+Jatiasih%2C+Kota+Bekasi%2C+Jawa+Barat+17425%2C+Indonesia"
+  },
+  "buildingTypes": [
+    {
+      "id": "type-46",
+      "name": "Type 46",
+      "description": "Rumah tapak satu lantai dengan 3 kamar tidur, cocok untuk keluarga yang membutuhkan ruang lebih leluasa.",
+      "floors": 1,
+      "buildingArea": 46,
+      "bedrooms": 3,
+      "toilets": 1,
+      "livingRoom": true,
+      "kitchen": true,
+      "frontGarden": true,
+      "backGarden": true,
+      "carport": true
+    },
+    {
+      "id": "type-30",
+      "name": "Type 30",
+      "description": "Rumah tapak satu lantai dengan 2 kamar tidur, tata ruang efisien dan fungsional untuk keluarga masa kini.",
+      "floors": 1,
+      "buildingArea": 30,
+      "bedrooms": 2,
+      "toilets": 1,
+      "livingRoom": true,
+      "kitchen": true,
+      "frontGarden": true,
+      "backGarden": false,
+      "carport": true
+    }
+  ],
+  "nearbyFacilities": [
+    {
+      "name": "SMP & SMK Ki Hajar Dewantara",
+      "approximateDistance": "140 m",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Alfamart Haji Dehir",
+      "approximateDistance": "190 m",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Masjid Al-Hidayah",
+      "approximateDistance": "190 m",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "SMKN 7 Kota Bekasi",
+      "approximateDistance": "650 m",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Puskesmas Jatiluhur",
+      "approximateDistance": "700 m",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "SDIT Yaditama Ar Rahman",
+      "approximateDistance": "800 m",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Kota Cinema Mall",
+      "approximateDistance": "1,2 km",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Superindo Wibawa Mukti",
+      "approximateDistance": "1,5 km",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Area kuliner Jatiasih / Jl. Parpostel",
+      "approximateDistance": "1,1 - 2 km",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Gerbang Tol Jatiasih 2",
+      "approximateDistance": "3,6 km",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    },
+    {
+      "name": "Gerbang Tol Jatiwarna 1",
+      "approximateDistance": "4,6 km",
+      "sourceNote": "Perkiraan dari brosur pemasaran"
+    }
+  ],
+  "brochureCandidateContact": "0822-9923-7825"
+}

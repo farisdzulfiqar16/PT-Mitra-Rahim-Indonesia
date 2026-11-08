@@ -50,6 +50,35 @@ export const metadata: Metadata = {
  * Root Layout untuk locale routing.
  * Setiap halaman di bawah /[locale]/ mewarisi layout ini.
  */
+/**
+ * Structured data JSON-LD — Organization + WebSite.
+ *
+ * Hanya menggunakan data yang sudah diketahui dan aman:
+ * - Nama perusahaan: PT Mitra Rahim Indonesia.
+ * - Nama website: Celestia.
+ * - url dan sameAs: dikosongkan sampai domain resmi dikonfirmasi.
+ *
+ * Data yang TIDAK dimasukkan karena belum dikonfirmasi:
+ * - Alamat kantor (address), nomor telepon, logo URL, URL media sosial.
+ */
+function buildStructuredData(): string {
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.company,
+    brand: { "@type": "Brand", name: siteConfig.name },
+  };
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.name,
+    description: siteConfig.tagline,
+    inLanguage: ["id", "en"],
+    ...(seoConfig.siteUrl ? { url: seoConfig.siteUrl } : {}),
+  };
+  return JSON.stringify([orgSchema, websiteSchema]);
+}
+
 export default async function LocaleLayout({
   children,
   params,
@@ -72,6 +101,8 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${geistSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-neutral-900">
+        {/* Structured data JSON-LD — Organization + WebSite schema */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: buildStructuredData() }} />
         <NextIntlClientProvider messages={messages}>
           <Navbar />
           <main className="flex-1">

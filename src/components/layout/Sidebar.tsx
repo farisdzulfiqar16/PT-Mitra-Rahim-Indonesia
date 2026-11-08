@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Building2, Map, ClipboardList, FolderKanban, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 
@@ -43,10 +44,11 @@ const DEFAULT_PROJECTS: SidebarProjectItem[] = [
 /**
  * Sidebar — Komponen navigasi samping untuk proyek properti Celestia.
  *
- * Memenuhi acceptance criteria Task 8:
+ * Memenuhi acceptance criteria Task 8 & Batch 1:
  * - Menampilkan daftar proyek dengan indikator proyek yang aktif.
  * - Menampilkan badge "Coming Soon" untuk Pabuaran dan "Tersedia" untuk proyek aktif.
- * - Menyediakan navigasi kontekstual (Katalog Unit, Site Plan, Formulir Minat).
+ * - Menyediakan navigasi kontekstual (Katalog Unit, Site Plan, Formulir Minat & Konsultasi).
+ * - Meneruskan parameter proyek ke Formulir Minat & Konsultasi secara otomatis.
  * - Mendukung mobile collapse toggle (accordion di layar kecil).
  */
 export function Sidebar({
@@ -62,7 +64,7 @@ export function Sidebar({
   const contextualTitle = labels.contextualTitle || (locale === "en" ? "Explore" : "Eksplorasi");
   const viewUnits = labels.viewUnits || (locale === "en" ? "Unit Catalog" : "Lihat Katalog Unit");
   const viewSitePlan = labels.viewSitePlan || (locale === "en" ? "Site Plan" : "Lihat Site Plan");
-  const interestForm = labels.interestForm || (locale === "en" ? "Interest Form" : "Isi Formulir Minat");
+  const interestForm = labels.interestForm || (locale === "en" ? "Interest & Consultation" : "Formulir Minat & Konsultasi");
   const availableLabel = labels.available || (locale === "en" ? "Active" : "Tersedia");
   const comingSoonLabel = labels.comingSoon || "Coming Soon";
   const mobileToggleText = labels.mobileToggle || (locale === "en" ? "Project Menu" : "Menu Proyek & Navigasi");
@@ -114,7 +116,8 @@ export function Sidebar({
                 href={`/${locale}/projects/dehir/units`}
                 className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-primary-700 transition-colors min-h-[44px]"
               >
-                📋 {viewUnits}
+                <Building2 className="h-4 w-4 mr-2 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
+                <span>{viewUnits}</span>
               </Link>
             </li>
             <li>
@@ -122,15 +125,17 @@ export function Sidebar({
                 href={`/${locale}/projects/dehir`}
                 className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-primary-700 transition-colors min-h-[44px]"
               >
-                🗺️ {viewSitePlan}
+                <Map className="h-4 w-4 mr-2 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
+                <span>{viewSitePlan}</span>
               </Link>
             </li>
             <li>
               <Link
-                href={`/${locale}/interest`}
+                href={`/${locale}/interest?project=${currentSlug}`}
                 className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-primary-700 transition-colors min-h-[44px]"
               >
-                📝 {interestForm}
+                <ClipboardList className="h-4 w-4 mr-2 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
+                <span>{interestForm}</span>
               </Link>
             </li>
           </ul>
@@ -154,18 +159,16 @@ export function Sidebar({
           className="flex w-full items-center justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-colors min-h-[44px]"
         >
           <span className="flex items-center gap-2">
-            <span>📑</span>
+            <FolderKanban className="h-4 w-4 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
             <span>{mobileToggleText}</span>
           </span>
-          <span
+          <ChevronDown
             className={cn(
-              "text-xs transition-transform duration-200",
+              "h-4 w-4 text-neutral-500 transition-transform duration-200 shrink-0 stroke-[2]",
               isMobileOpen ? "rotate-180" : ""
             )}
             aria-hidden="true"
-          >
-            ▼
-          </span>
+          />
         </button>
 
         {isMobileOpen && (

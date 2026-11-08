@@ -5,7 +5,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
+import { MapPin, Images, Navigation, ExternalLink } from "lucide-react";
+import { siteConfig, uiConfig, buildAlternates, buildGoogleMapsUrl, formatProjectAddress } from "@/config/site";
 import { Card } from "@/components/ui/Card";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
@@ -161,12 +162,45 @@ export default async function ExplorationPage({
           waDisabled: (await getTranslations("whatsapp"))("disabled"),
           filterAll: locale === "en" ? "All" : "Semua",
           contactForPrice: (await getTranslations("unit"))("contactForPrice"),
+          projectAddressLabel: tProject("projectAddressLabel"),
+          buildingTypesSectionTitle: tProject("buildingTypesSectionTitle"),
+          buildingTypesSectionSubtitle: tProject("buildingTypesSectionSubtitle"),
+          buildingTypesDisclaimer: tProject("buildingTypesDisclaimer"),
+          floorPlanInPreparation: tProject("floorPlanInPreparation"),
+          floorPlanInPreparationDesc: tProject("floorPlanInPreparationDesc"),
+          singleStoreyTag: tProject("singleStoreyTag"),
+          specBedrooms: tProject("specBedrooms"),
+          specBathrooms: tProject("specBathrooms"),
+          specLivingRoom: tProject("specLivingRoom"),
+          specKitchen: tProject("specKitchen"),
+          specFrontGarden: tProject("specFrontGarden"),
+          specBackGarden: tProject("specBackGarden"),
+          specCarport: tProject("specCarport"),
+          specBuildingArea: tProject("specBuildingArea"),
+          facilitiesSectionTitle: tProject("facilitiesSectionTitle"),
+          facilitiesSectionSubtitle: tProject("facilitiesSectionSubtitle"),
+          facilitiesDisclaimer: tProject("facilitiesDisclaimer"),
+          facilityDistanceEstimate: tProject("facilityDistanceEstimate"),
+          brochureContactTitle: tProject("brochureContactTitle"),
+          brochureContactNotice: tProject("brochureContactNotice"),
+          kavlingMeasurementDisclaimer: tProject("kavlingMeasurementDisclaimer"),
+          dimensionsLabel: tProject("dimensionsLabel"),
+          landAreaLabel: tProject("landAreaLabel"),
+          unitKavlingTitle: tProject("unitKavlingTitle"),
+          unitKavlingSubtitle: tProject("unitKavlingSubtitle"),
+          viewAllUnits: tProject("viewAllUnits"),
+          buildingOptionsNotice: tProject("buildingOptionsNotice"),
+          temporaryContactBadge: tProject("temporaryContactBadge"),
+          viewOnGoogleMaps: tProject("viewOnGoogleMaps"),
         }}
       />
     );
   }
 
   // ── V1 fallback ─────────────────────────────────────────────────────────
+  const mapsUrl = buildGoogleMapsUrl(project.location);
+  const fullAddress = formatProjectAddress(project.location);
+
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
@@ -210,13 +244,30 @@ export default async function ExplorationPage({
         <div className="flex-1 space-y-6">
           {/* Google Maps placeholder */}
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-neutral-900">📍 {project.location.city}</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-neutral-900">
+              <MapPin className="h-5 w-5 text-primary-700 stroke-[2]" aria-hidden="true" />
+              <span>{project.location.city}</span>
+            </h2>
             <Placeholder
               type="map"
               label={tEmpty("sitePlanPlaceholder")}
-              description={`${project.location.city}, ${project.location.province}`}
+              description={fullAddress || `${project.location.city}, ${project.location.province}`}
               className="aspect-video"
             />
+            {mapsUrl && (
+              <div className="mt-3">
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-primary-600 bg-primary-700 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-800 transition-colors shadow-xs"
+                >
+                  <Navigation className="h-3.5 w-3.5 stroke-[2]" aria-hidden="true" />
+                  <span>{tProject("viewOnGoogleMaps")}</span>
+                  <ExternalLink className="h-3 w-3 stroke-[2] opacity-80" aria-hidden="true" />
+                </a>
+              </div>
+            )}
           </section>
 
           {/* Site Plan — via SitePlanPanel */}
@@ -242,7 +293,10 @@ export default async function ExplorationPage({
 
           {/* Gallery */}
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-neutral-900">🖼️ {tNav("projects")} — Gallery</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-neutral-900">
+              <Images className="h-5 w-5 text-primary-700 stroke-[2]" aria-hidden="true" />
+              <span>{tNav("projects")} — Gallery</span>
+            </h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               <Placeholder type="image" label="Foto" className="aspect-square" />
               <Placeholder type="image" label="Foto" className="aspect-square" />

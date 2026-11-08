@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { Languages } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface LanguageSwitcherProps {
@@ -55,6 +56,10 @@ function LanguageSwitcherInner({
         className
       )}
     >
+      <Languages
+        className="h-3.5 w-3.5 text-neutral-400 ml-1.5 mr-0.5 shrink-0 stroke-[1.75]"
+        aria-hidden="true"
+      />
       <Link
         href={idHref}
         aria-current={currentLocale === "id" ? "true" : undefined}

@@ -1,5 +1,5 @@
 /**
- * Katalog Proyek — menampilkan daftar semua proyek.
+ * Katalog Proyek — menampilkan daftar semua proyek secara dinamis.
  */
 
 import type { Metadata } from "next";
@@ -60,11 +60,9 @@ export default async function ProjectsPage({
   const tStatus = await getTranslations("status");
   const tCta = await getTranslations("cta");
 
+  // Ambil data proyek secara dinamis melalui service layer
   const allProjects = await getAllProjects();
   const activeProjects = await getActiveProjects();
-  const dehir = allProjects.find((p) => p.id === "dehir") || allProjects[0];
-  const pabuaran = allProjects.find((p) => p.id === "pabuaran") || allProjects[1];
-
   const activeCount = activeProjects.length;
 
   // ── V2 ─────────────────────────────────────────────────────────────────
@@ -72,8 +70,7 @@ export default async function ProjectsPage({
     return (
       <ProjectCatalogV2
         locale={locale}
-        dehir={dehir}
-        pabuaran={pabuaran}
+        projects={allProjects}
         labels={{
           home: tNav("home"),
           projects: tNav("projects"),
@@ -103,33 +100,41 @@ export default async function ProjectsPage({
       <p className="mb-6 text-sm text-neutral-500">{activeCount} proyek aktif</p>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Dehir */}
-        <Card as="article" href={`/${locale}/projects/dehir`} interactive className="flex flex-col">
-          <Placeholder type="image" label={tStatus("available")} className="rounded-t-lg border-0 border-b border-neutral-200" />
-          <div className="p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-neutral-900">{dehir.name}</h2>
-              <Badge variant="available">{tStatus("available")}</Badge>
-            </div>
-            <p className="text-sm font-medium text-primary-700">{dehir.fullName}</p>
-            <p className="mt-2 text-sm text-neutral-600">{dehir.shortDescription}</p>
-            <p className="mt-2 text-xs text-neutral-400">{dehir.location.city}, {dehir.location.province}</p>
-          </div>
-        </Card>
-
-        {/* Pabuaran — Coming Soon */}
-        <Card as="article" interactive className="flex flex-col opacity-90">
-          <Placeholder type="general" label={tStatus("comingSoon")} className="rounded-t-lg border-0 border-b border-neutral-200" />
-          <div className="p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-neutral-900">{pabuaran.name}</h2>
-              <Badge variant="coming-soon">{tStatus("comingSoon")}</Badge>
-            </div>
-            <p className="text-sm font-medium text-neutral-500">{pabuaran.fullName}</p>
-            <p className="mt-2 text-sm text-neutral-500">{pabuaran.shortDescription}</p>
-            <p className="mt-2 text-xs text-neutral-400">{pabuaran.location.city}, {pabuaran.location.province}</p>
-          </div>
-        </Card>
+        {allProjects.map((project) => {
+          const isActive = project.status === "active";
+          return (
+            <Card
+              key={project.id || project.slug}
+              as="article"
+              href={`/${locale}/projects/${project.slug}`}
+              interactive
+              className={`flex flex-col ${isActive ? "" : "opacity-90"}`}
+            >
+              <Placeholder
+                type={isActive ? "image" : "general"}
+                label={isActive ? tStatus("available") : tStatus("comingSoon")}
+                className="rounded-t-lg border-0 border-b border-neutral-200"
+              />
+              <div className="p-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-neutral-900">{project.name}</h2>
+                  <Badge variant={isActive ? "available" : "coming-soon"}>
+                    {isActive ? tStatus("available") : tStatus("comingSoon")}
+                  </Badge>
+                </div>
+                <p className={`text-sm font-medium ${isActive ? "text-primary-700" : "text-neutral-500"}`}>
+                  {project.fullName}
+                </p>
+                <p className={`mt-2 text-sm ${isActive ? "text-neutral-600" : "text-neutral-500"}`}>
+                  {project.shortDescription}
+                </p>
+                <p className="mt-2 text-xs text-neutral-400">
+                  {project.location.city}, {project.location.province}
+                </p>
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
