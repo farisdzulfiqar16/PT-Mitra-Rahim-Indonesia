@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   MapPin,
@@ -107,7 +108,7 @@ function getFacilityIcon(name: string): LucideIcon {
   return MapPin;
 }
 
-export function ExplorationV2({
+function ExplorationV2Content({
   locale,
   project,
   units,
@@ -662,5 +663,25 @@ function UnitCard({
         </div>
       </div>
     </article>
+  );
+}
+
+function ExplorationV2WithSearchParams(props: ExplorationV2Props) {
+  const searchParams = useSearchParams();
+  const rawUnitFromUrl = searchParams.get("unit")?.trim() || undefined;
+  // Validasi parameter: hanya terima kode unit yang benar-benar ada di data unit proyek
+  const isValidUnit = rawUnitFromUrl && Array.isArray(props.units)
+    ? props.units.some((u) => u.unitCode && u.unitCode.toLowerCase() === rawUnitFromUrl.toLowerCase())
+    : false;
+  const unitFromUrl = rawUnitFromUrl && isValidUnit ? rawUnitFromUrl.toUpperCase() : undefined;
+  const activeHighlightedUnitCode = props.highlightedUnitCode || unitFromUrl;
+  return <ExplorationV2Content {...props} highlightedUnitCode={activeHighlightedUnitCode} />;
+}
+
+export function ExplorationV2(props: ExplorationV2Props) {
+  return (
+    <Suspense fallback={<ExplorationV2Content {...props} />}>
+      <ExplorationV2WithSearchParams {...props} />
+    </Suspense>
   );
 }

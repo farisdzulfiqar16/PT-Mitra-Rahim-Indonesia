@@ -33,6 +33,8 @@ import { seoConfig } from "@/config/site";
 import { getAllProjectsSync, getUnitsByProjectSync } from "@/services";
 import type { Project } from "@/types";
 
+export const dynamic = "force-static";
+
 /** Locale yang didukung */
 const LOCALES = ["id", "en"] as const;
 

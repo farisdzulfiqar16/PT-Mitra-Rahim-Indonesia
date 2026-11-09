@@ -88,13 +88,10 @@ export async function generateMetadata({
 
 export default async function ExplorationPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string; slug: string }>;
-  searchParams: Promise<{ unit?: string }>;
 }) {
   const { locale, slug } = await params;
-  const { unit: highlightedUnitCode } = await searchParams;
   setRequestLocale(locale);
 
   const tNav = await getTranslations("nav");
@@ -139,7 +136,6 @@ export default async function ExplorationPage({
         locale={locale}
         project={project}
         units={units}
-        highlightedUnitCode={highlightedUnitCode}
         sitePlanAvailable={SITE_PLAN_AVAILABLE}
         labels={{
           home: tNav("home"),
@@ -274,7 +270,7 @@ export default async function ExplorationPage({
           <SitePlanPanel
             isAvailable={SITE_PLAN_AVAILABLE}
             units={units}
-            highlightedUnitCode={highlightedUnitCode}
+            highlightedUnitCode={undefined}
             title={tProject("viewSitePlan")}
             placeholderLabel={tEmpty("sitePlanPlaceholder")}
             placeholderDesc={tEmpty("sitePlanPlaceholderDesc")}

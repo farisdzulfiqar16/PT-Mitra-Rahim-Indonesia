@@ -180,8 +180,9 @@ function InterestFormContent({
         ? `${formData.kavlingCode} (Preferensi Awal)`
         : "-";
 
-    const nameText = formData.name?.trim() ? formData.name.trim() : "-";
-    const notesText = formData.notes?.trim() ? formData.notes.trim() : "-";
+    // Sanitasi & batasi panjang teks untuk mencegah URL overflow pada WhatsApp handoff
+    const nameText = formData.name?.trim() ? formData.name.trim().slice(0, 100) : "-";
+    const notesText = formData.notes?.trim() ? formData.notes.trim().slice(0, 1000) : "-";
 
     return (
       `Halo Tim Marketing Celestia (PT Mitra Rahim Indonesia),\n\n` +
@@ -560,6 +561,7 @@ function InterestFormContent({
           <input
             type="text"
             id="name"
+            maxLength={100}
             value={formData.name || ""}
             onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             placeholder={labels.namePlaceholder}
@@ -574,6 +576,7 @@ function InterestFormContent({
           <textarea
             id="notes"
             rows={4}
+            maxLength={1000}
             value={formData.notes || ""}
             onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
             placeholder={labels.notesPlaceholder}

@@ -76,7 +76,8 @@ function buildStructuredData(): string {
     inLanguage: ["id", "en"],
     ...(seoConfig.siteUrl ? { url: seoConfig.siteUrl } : {}),
   };
-  return JSON.stringify([orgSchema, websiteSchema]);
+  // Hardening: escape karakter '<' sebagai '\u003c' untuk mencegah potensi script-breakout XSS
+  return JSON.stringify([orgSchema, websiteSchema]).replace(/</g, "\\u003c");
 }
 
 export default async function LocaleLayout({

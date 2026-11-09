@@ -2,17 +2,15 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 /**
- * Konfigurasi Next.js untuk project Celestia.
- *
- * Catatan:
- * - Next.js 16 menggunakan Turbopack secara default untuk build.
- * - Turbopack memerlukan konfigurasi loader CSS eksplisit agar
- *   Tailwind CSS v4 (@theme, @import) dapat diproses dengan benar.
- * - next-intl plugin untuk App Router i18n routing.
+ * Konfigurasi Next.js untuk project Celestia (POC Static Export).
  */
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  output: "export",
+  images: {
+    unoptimized: true,
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -18,6 +18,8 @@
 import type { MetadataRoute } from "next";
 import { seoConfig } from "@/config/site";
 
+export const dynamic = "force-static";
+
 export default function robots(): MetadataRoute.Robots {
   // Prototype — izinkan crawler membaca halaman agar meta robots noindex terbaca,
   // tapi tidak menyertakan sitemap dan tidak mengaktifkan indexing.
