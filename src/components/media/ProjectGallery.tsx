@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Images, X } from "lucide-react";
 import { Placeholder } from "@/components/ui/Placeholder";
@@ -46,6 +46,18 @@ export function ProjectGallery({
   className,
 }: ProjectGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<GalleryImageItem | null>(null);
+
+  // Tutup lightbox saat tombol Escape ditekan
+  useEffect(() => {
+    if (!selectedImage) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedImage(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedImage]);
 
   const fallbackLabel =
     emptyLabel || (locale === "en" ? "Site Documentation" : "Dokumentasi Lapangan");
@@ -136,8 +148,8 @@ export function ProjectGallery({
               <button
                 type="button"
                 onClick={() => setSelectedImage(null)}
-                aria-label="Tutup preview"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-200 hover:bg-neutral-700 min-h-[36px]"
+                aria-label={locale === "en" ? "Close image preview" : "Tutup preview gambar"}
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-neutral-800 px-3.5 py-2 text-xs font-semibold text-neutral-200 hover:bg-neutral-700 hover:text-white transition-colors min-h-[44px] min-w-[44px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               >
                 <X className="h-4 w-4 stroke-[2]" aria-hidden="true" />
                 <span>{locale === "en" ? "Close" : "Tutup"}</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ZoomIn, MapPin, X } from "lucide-react";
 import { Placeholder } from "@/components/ui/Placeholder";
@@ -38,6 +38,18 @@ export function InteractiveSitePlan({
 }: InteractiveSitePlanProps) {
   const [isZoomed, setIsZoomed] = useState(false);
   const [loadError, setLoadError] = useState(false);
+
+  // Tutup modal zoom saat tombol Escape ditekan
+  useEffect(() => {
+    if (!isZoomed) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsZoomed(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isZoomed]);
 
   // Jika URL denah tidak diberikan atau terjadi error saat load aset, gunakan fallback
   if (!sitePlanUrl || loadError) {
@@ -107,9 +119,10 @@ export function InteractiveSitePlan({
               <button
                 type="button"
                 onClick={() => setIsZoomed(false)}
-                className="inline-flex items-center gap-1 rounded-lg bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-700 hover:bg-neutral-200 min-h-[32px]"
+                aria-label="Tutup tampilan denah"
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-neutral-100 px-3.5 py-2 text-xs font-semibold text-neutral-700 hover:bg-neutral-200 transition-colors min-h-[44px] min-w-[44px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               >
-                <X className="w-3.5 h-3.5 stroke-[2.5]" aria-hidden="true" />
+                <X className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
                 <span>Tutup</span>
               </button>
             </div>
