@@ -140,7 +140,7 @@ export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Prop
               <div className="flex items-center gap-2 mb-1.5">
                 <House className="h-4 w-4 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
                 <h3 className="font-bold text-neutral-900">
-                  {locale === "en" ? "House Building Options (Brochure)" : "Pilihan Desain Rumah (Brosur)"}
+                  {locale === "en" ? "House Building Options" : "Pilihan Desain Rumah"}
                 </h3>
               </div>
               <p className="leading-relaxed text-neutral-600">
@@ -284,11 +284,11 @@ export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Prop
                   <div className="flex items-center gap-1.5">
                     <Phone className="h-3.5 w-3.5 text-primary-800 shrink-0 stroke-[1.75]" aria-hidden="true" />
                     <span className="font-bold text-neutral-900">
-                      {labels.brochureContactTitle || "Informasi Kontak (Brosur)"}
+                      {labels.brochureContactTitle || "Informasi Kontak Pemasaran"}
                     </span>
                   </div>
                   <span className="rounded bg-primary-200/70 px-2 py-0.5 text-[10px] font-semibold text-primary-900">
-                    {labels.temporaryContactBadge || "Kontak Pemasaran (Brosur)"}
+                    {labels.temporaryContactBadge || "Kontak Pemasaran"}
                   </span>
                 </div>
                 <div className="my-1.5">
@@ -298,7 +298,7 @@ export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Prop
                 </div>
                 <p className="text-[11px] text-neutral-600 leading-normal">
                   {labels.brochureContactNotice ||
-                    "Nomor ini tercantum pada brosur pemasaran Dehir. Status: digunakan berdasarkan data yang tersedia, menunggu konfirmasi terbaru dari Owner. Anda dapat menghubungi marketing langsung melalui tombol WhatsApp."}
+                    "Nomor ini merupakan kontak marketing Celestia Dehir. Silakan hubungi langsung melalui tombol WhatsApp."}
                 </p>
               </div>
             )}

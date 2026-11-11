@@ -13,7 +13,7 @@
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import { SmartImage } from "@/components/ui/SmartImage";
+import { ProjectCardVisual } from "@/components/projects/ProjectCardVisual";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types";
@@ -76,14 +76,12 @@ export function ProjectCatalogV2({ locale, projects, labels }: ProjectCatalogV2P
                   )}
                 >
                   <div className="flex flex-col sm:flex-row">
-                    {/* Image / Thumbnail with Smart Fallback */}
+                    {/* Image / Thumbnail with Smart Visual */}
                     <div className="sm:w-72 shrink-0">
-                      <SmartImage
-                        src={`/images/projects/${project.slug}/hero.jpg`}
-                        alt={project.fullName}
+                      <ProjectCardVisual
+                        project={project}
+                        locale={locale}
                         aspectRatio="auto"
-                        placeholderType={isActive ? "image" : "general"}
-                        placeholderLabel={isActive ? project.fullName : labels.comingSoon}
                         className="h-48 w-full sm:h-full rounded-none border-0 border-b border-neutral-100 sm:border-b-0 sm:border-r"
                       />
                     </div>

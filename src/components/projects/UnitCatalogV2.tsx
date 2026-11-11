@@ -117,7 +117,7 @@ export function UnitCatalogV2({ locale, project, units, labels }: UnitCatalogV2P
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
-                      {labels.brochureContactTitle || "Informasi Kontak Pemasaran (Brosur)"}
+                      {labels.brochureContactTitle || "Informasi Kontak Pemasaran"}
                     </h2>
                     <span className="rounded bg-amber-200/80 px-2 py-0.5 text-[10px] font-semibold text-amber-900">
                       {labels.temporaryContactBadge || "Informasi Sementara"}
@@ -125,7 +125,7 @@ export function UnitCatalogV2({ locale, project, units, labels }: UnitCatalogV2P
                   </div>
                   <p className="text-xs text-neutral-600 leading-relaxed max-w-2xl">
                     {labels.brochureContactNotice ||
-                      "Nomor ini tercantum pada brosur pemasaran Dehir sebagai informasi kontak sementara dan menunggu konfirmasi resmi dari Owner. Tombol WhatsApp dan panggilan langsung dinonaktifkan."}
+                      "Nomor ini merupakan kontak marketing Celestia Dehir. Silakan hubungi langsung melalui saluran yang tersedia."}
                   </p>
                 </div>
               </div>

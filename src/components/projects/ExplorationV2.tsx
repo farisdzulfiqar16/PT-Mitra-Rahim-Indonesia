@@ -28,10 +28,13 @@ import type { LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { ProjectLocationMap } from "@/components/projects/ProjectLocationMap";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
+import { ProjectGallery } from "@/components/media/ProjectGallery";
 import { SitePlanPanel } from "@/features/site-plan/SitePlanPanel";
 import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
 import { buildGoogleMapsUrl, formatProjectAddress } from "@/config/site";
+import type { ProjectGalleryImage } from "@/data/media/dehir-gallery";
 import { cn } from "@/lib/utils";
 import type { Project, PropertyUnit, UnitStatus } from "@/types";
 
@@ -41,6 +44,7 @@ interface ExplorationV2Props {
   units: PropertyUnit[];
   highlightedUnitCode?: string;
   sitePlanAvailable: boolean;
+  galleryImages?: ProjectGalleryImage[];
   labels: {
     home: string;
     projects: string;
@@ -92,6 +96,7 @@ interface ExplorationV2Props {
     buildingOptionsNotice?: string;
     temporaryContactBadge?: string;
     viewOnGoogleMaps?: string;
+    galleryTitle?: string;
   };
 }
 
@@ -114,6 +119,7 @@ function ExplorationV2Content({
   units,
   highlightedUnitCode,
   sitePlanAvailable,
+  galleryImages = [],
   labels,
 }: ExplorationV2Props) {
   const [activeFilter, setActiveFilter] = useState<string>("all");
@@ -220,10 +226,10 @@ function ExplorationV2Content({
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h2 className="text-sm font-bold text-neutral-900">
-                      {labels.brochureContactTitle || "Informasi Kontak Pemasaran (Brosur)"}
+                      {labels.brochureContactTitle || "Informasi Kontak Pemasaran"}
                     </h2>
                     <span className="rounded bg-primary-200/80 px-2 py-0.5 text-[10px] font-semibold text-primary-900">
-                      {labels.temporaryContactBadge || "Kontak Pemasaran (Brosur)"}
+                      {labels.temporaryContactBadge || "Kontak Pemasaran"}
                     </span>
                   </div>
                   <p className="text-xs text-neutral-600 leading-relaxed max-w-2xl">
@@ -297,7 +303,7 @@ function ExplorationV2Content({
             <Info className="h-4 w-4 text-neutral-500 shrink-0 stroke-[1.75] mt-0.5" aria-hidden="true" />
             <p>
               {labels.kavlingMeasurementDisclaimer ||
-                "Catatan Ukuran Kavling: Luas tanah dan dimensi (lebar × panjang) bersumber dari brosur pemasaran awal. Dimensi merepresentasikan perkiraan lebar muka dan panjang rata-rata, bukan hasil pengukuran geometris persegi panjang yang presisi. Status ketersediaan seluruh unit saat ini belum dikonfirmasi resmi oleh pengembang."}
+                "Catatan Ukuran Kavling: Luas tanah dan dimensi (lebar × panjang) merupakan perkiraan berdasarkan data pemasaran awal. Dimensi merepresentasikan perkiraan lebar muka dan panjang rata-rata. Status ketersediaan seluruh unit saat ini belum dikonfirmasi resmi oleh pengembang."}
             </p>
           </div>
 
@@ -339,26 +345,17 @@ function ExplorationV2Content({
                     {fullAddressDisplay}
                   </p>
                 </div>
-                <Placeholder
-                  type="map"
-                  label={locale === "en" ? "Location Map" : "Peta Lokasi"}
-                  description={fullAddressDisplay}
-                  className="aspect-video border-0 rounded-none"
+                <ProjectLocationMap
+                  projectName={project.fullName}
+                  formattedAddress={fullAddressDisplay}
+                  mapsUrl={mapsUrl}
+                  hasVerifiedStreetAddress={Boolean(project.location?.streetAddress)}
+                  locale={locale}
+                  title={labels.projectAddressLabel}
+                  viewOnMapsLabel={labels.viewOnGoogleMaps}
+                  aspectRatio="video"
+                  className="rounded-none border-0 shadow-none"
                 />
-                {mapsUrl && (
-                  <div className="p-3 bg-white border-t border-neutral-100">
-                    <a
-                      href={mapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary-800 transition-colors shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 min-h-[40px]"
-                    >
-                      <Navigation className="h-4 w-4 stroke-[2]" aria-hidden="true" />
-                      <span>{labels.viewOnGoogleMaps || (locale === "en" ? "View Location on Google Maps" : "Lihat Lokasi di Google Maps")}</span>
-                      <ExternalLink className="h-3.5 w-3.5 stroke-[2] opacity-80" aria-hidden="true" />
-                    </a>
-                  </div>
-                )}
               </div>
 
               {/* Site Plan panel */}
@@ -386,6 +383,16 @@ function ExplorationV2Content({
             </aside>
           </div>
         </section>
+
+        {galleryImages.length > 0 && (
+          <section aria-label={labels.galleryTitle} className="pt-6 border-t border-neutral-200">
+            <ProjectGallery
+              title={labels.galleryTitle}
+              images={galleryImages}
+              locale={locale}
+            />
+          </section>
+        )}
 
         {/* ── Bagian 2: Pilihan Tipe Bangunan (Type 30 & Type 46) ─────────── */}
         {project.buildingTypes && project.buildingTypes.length > 0 && (
@@ -499,7 +506,7 @@ function ExplorationV2Content({
               <Info className="h-3.5 w-3.5 text-neutral-400 shrink-0 stroke-[1.75]" aria-hidden="true" />
               <span>
                 {labels.buildingTypesDisclaimer ||
-                  "Spesifikasi tipe bangunan bersumber dari materi promosi brosur pemasaran awal. Gambar denah arsitektur resmi sedang dipersiapkan dan akan diterbitkan setelah verifikasi final pengembang."}
+                  "Spesifikasi tipe bangunan merupakan informasi awal yang tersedia. Denah arsitektur resmi sedang dipersiapkan dan akan diterbitkan setelah verifikasi final pengembang."}
               </span>
             </div>
           </section>
@@ -556,7 +563,7 @@ function ExplorationV2Content({
               <Info className="h-4 w-4 text-neutral-500 shrink-0 stroke-[1.75]" aria-hidden="true" />
               <p className="text-[11px] text-neutral-500 leading-relaxed">
                 {labels.facilitiesDisclaimer ||
-                  "Seluruh jarak yang tercantum di atas merupakan estimasi perkiraan dari brosur pemasaran, bukan hasil pengukuran lapangan presisi atau penentuan rute resmi."}
+                  "Seluruh jarak yang tercantum merupakan perkiraan dan bukan hasil pengukuran lapangan presisi atau penentuan rute resmi."}
               </p>
             </div>
           </section>

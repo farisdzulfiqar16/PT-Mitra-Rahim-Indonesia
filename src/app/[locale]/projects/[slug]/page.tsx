@@ -12,7 +12,9 @@ import { Placeholder } from "@/components/ui/Placeholder";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SitePlanPanel } from "@/features/site-plan/SitePlanPanel";
+import { ProjectGallery } from "@/components/media/ProjectGallery";
 import { ExplorationV2 } from "@/components/projects/ExplorationV2";
+import { getProjectGalleryImages } from "@/data/media/dehir-gallery";
 import { ComingSoonTeaser } from "@/components/projects/ComingSoonTeaser";
 import {
   getAllProjectsSync,
@@ -128,6 +130,8 @@ export default async function ExplorationPage({
 
   // Dehir — full exploration page
   const units = await getUnitsByProject(project.id);
+  const galleryImages = getProjectGalleryImages(project.slug, locale);
+  const tHome = await getTranslations("homepage");
 
   // ── V2 ─────────────────────────────────────────────────────────────────
   if (uiConfig.uiVariant === "v2") {
@@ -137,6 +141,7 @@ export default async function ExplorationPage({
         project={project}
         units={units}
         sitePlanAvailable={SITE_PLAN_AVAILABLE}
+        galleryImages={galleryImages}
         labels={{
           home: tNav("home"),
           projects: tNav("projects"),
@@ -188,6 +193,7 @@ export default async function ExplorationPage({
           buildingOptionsNotice: tProject("buildingOptionsNotice"),
           temporaryContactBadge: tProject("temporaryContactBadge"),
           viewOnGoogleMaps: tProject("viewOnGoogleMaps"),
+          galleryTitle: tHome("galleryTitle"),
         }}
       />
     );
@@ -287,18 +293,28 @@ export default async function ExplorationPage({
             viewDetailLabel={tCta("viewDetail")}
           />
 
-          {/* Gallery */}
+          {/* Gallery — sumber yang sama dengan homepage */}
           <section>
-            <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-neutral-900">
-              <Images className="h-5 w-5 text-primary-700 stroke-[2]" aria-hidden="true" />
-              <span>{tNav("projects")} — Gallery</span>
-            </h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              <Placeholder type="image" label="Foto" className="aspect-square" />
-              <Placeholder type="image" label="Foto" className="aspect-square" />
-              <Placeholder type="image" label="Foto" className="aspect-square" />
-              <Placeholder type="image" label="Foto" className="aspect-square" />
-            </div>
+            {galleryImages.length > 0 ? (
+              <ProjectGallery
+                title={tHome("galleryTitle")}
+                images={galleryImages}
+                locale={locale}
+              />
+            ) : (
+              <>
+                <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-neutral-900">
+                  <Images className="h-5 w-5 text-primary-700 stroke-[2]" aria-hidden="true" />
+                  <span>{tHome("galleryTitle")}</span>
+                </h2>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                  <Placeholder type="image" label="Foto" className="aspect-square" />
+                  <Placeholder type="image" label="Foto" className="aspect-square" />
+                  <Placeholder type="image" label="Foto" className="aspect-square" />
+                  <Placeholder type="image" label="Foto" className="aspect-square" />
+                </div>
+              </>
+            )}
           </section>
 
           {/* Unit Summary */}

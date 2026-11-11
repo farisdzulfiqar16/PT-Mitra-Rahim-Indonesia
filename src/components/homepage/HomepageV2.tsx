@@ -30,16 +30,19 @@ import {
 import { Badge } from "@/components/ui/Badge";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Card } from "@/components/ui/Card";
+import { ProjectCardVisual } from "@/components/projects/ProjectCardVisual";
 import { ProjectGallery } from "@/components/media/ProjectGallery";
 import { ProjectVideoPlayer } from "@/components/media/ProjectVideoPlayer";
 import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
 import { siteConfig } from "@/config/site";
+import type { ProjectGalleryImage } from "@/data/media/dehir-gallery";
 import type { Project } from "@/types";
 
 interface HomepageV2Props {
   locale: string;
   dehir: Project;
   pabuaran: Project;
+  galleryImages?: ProjectGalleryImage[];
   t: {
     portalBadge: string;
     heroHeadline: string;
@@ -98,7 +101,7 @@ function HeroPattern() {
   );
 }
 
-export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
+export function HomepageV2({ locale, dehir, pabuaran, galleryImages = [], t }: HomepageV2Props) {
   return (
     <div className="flex flex-col">
       {/* ── 1. Hero Section ────────────────────────────────────────────── */}
@@ -160,10 +163,12 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
             {/* Right Column: Hero Visual Showcase (5 cols) */}
             <div className="lg:col-span-5 animate-fade-in delay-100">
               <div className="relative group overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-2 shadow-lg transition-transform duration-300 hover:shadow-xl">
-                <Placeholder
-                  type="image"
-                  label="Celestia Dehir — Jatiluhur"
-                  className="w-full aspect-[4/3] rounded-xl transition-transform duration-500 group-hover:scale-[1.02]"
+                <ProjectCardVisual
+                  project={dehir}
+                  aspectRatio="4/3"
+                  priority
+                  locale={locale}
+                  className="w-full rounded-xl"
                 />
                 <div className="p-4 bg-white rounded-b-xl flex items-center justify-between">
                   <div>
@@ -202,10 +207,11 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
           {/* Card Proyek 1: Dehir (Aktif) */}
           <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xs transition-all duration-300 hover:shadow-lg hover:border-primary-300 hover:-translate-y-1">
             <div className="overflow-hidden bg-neutral-100">
-              <Placeholder
-                type="image"
-                label={dehir.name}
-                className="aspect-video w-full border-0 border-b border-neutral-100 rounded-none transition-transform duration-500 group-hover:scale-105"
+              <ProjectCardVisual
+                project={dehir}
+                aspectRatio="16/9"
+                locale={locale}
+                className="aspect-video w-full border-0 border-b border-neutral-100 rounded-none"
               />
             </div>
             <div className="flex flex-1 flex-col p-6 sm:p-7">
@@ -243,10 +249,11 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
           {/* Card Proyek 2: Pabuaran (Coming Soon) */}
           <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white/90 shadow-xs transition-all duration-300 hover:shadow-md hover:border-neutral-300 hover:-translate-y-0.5">
             <div className="overflow-hidden bg-neutral-100">
-              <Placeholder
-                type="general"
-                label={pabuaran.name}
-                className="aspect-video w-full border-0 border-b border-neutral-100 rounded-none transition-transform duration-500 group-hover:scale-105"
+              <ProjectCardVisual
+                project={pabuaran}
+                aspectRatio="16/9"
+                locale={locale}
+                className="aspect-video w-full border-0 border-b border-neutral-100 rounded-none"
               />
             </div>
             <div className="flex flex-1 flex-col p-6 sm:p-7">
@@ -388,6 +395,7 @@ export function HomepageV2({ locale, dehir, pabuaran, t }: HomepageV2Props) {
           <ProjectGallery
             title={t.galleryTitle}
             locale={locale}
+            images={galleryImages}
           />
 
           {/* Video Dokumentasi Resmi */}

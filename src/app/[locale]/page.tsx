@@ -12,8 +12,9 @@ import Link from "next/link";
 import { siteConfig, uiConfig, buildAlternates } from "@/config/site";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Placeholder } from "@/components/ui/Placeholder";
+import { ProjectCardVisual } from "@/components/projects/ProjectCardVisual";
 import { HomepageV2 } from "@/components/homepage/HomepageV2";
+import { getProjectGalleryImages } from "@/data/media/dehir-gallery";
 import { getAllProjects } from "@/services";
 
 /** OG locale mapping: Next.js menggunakan format en_US / id_ID */
@@ -78,6 +79,7 @@ export default async function HomePage({
         locale={locale}
         dehir={dehir}
         pabuaran={pabuaran}
+        galleryImages={getProjectGalleryImages("dehir", locale)}
         t={{
           portalBadge: t("portalBadge"),
           heroHeadline: t("portalHeadline"),
@@ -153,8 +155,13 @@ export default async function HomePage({
         <h2 className="mb-6 text-2xl font-bold text-neutral-900">{t("projectsTitle")}</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Dehir — Active */}
-          <Card as="article" href={`/${locale}/projects/dehir`} interactive className="flex flex-col">
-            <Placeholder type="image" label={t("galleryTitle")} className="rounded-t-lg border-0 border-b border-neutral-200" />
+          <Card as="article" href={`/${locale}/projects/dehir`} interactive className="flex flex-col overflow-hidden">
+            <ProjectCardVisual
+              project={dehir}
+              aspectRatio="16/9"
+              locale={locale}
+              className="rounded-t-lg border-0 border-b border-neutral-200"
+            />
             <div className="p-4">
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-neutral-900">{dehir.name}</h3>
@@ -166,8 +173,13 @@ export default async function HomePage({
           </Card>
 
           {/* Pabuaran — Coming Soon */}
-          <Card as="article" interactive className="flex flex-col opacity-90">
-            <Placeholder type="general" label={tStatus("comingSoon")} className="rounded-t-lg border-0 border-b border-neutral-200" />
+          <Card as="article" href={`/${locale}/projects/pabuaran`} interactive className="flex flex-col overflow-hidden opacity-90">
+            <ProjectCardVisual
+              project={pabuaran}
+              aspectRatio="16/9"
+              locale={locale}
+              className="rounded-t-lg border-0 border-b border-neutral-200"
+            />
             <div className="p-4">
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-neutral-900">{pabuaran.name}</h3>
