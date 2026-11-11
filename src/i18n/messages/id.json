@@ -149,7 +149,15 @@
     "notesPlaceholder": "Tuliskan pertanyaan spesifik, jadwal survei yang diinginkan, atau informasi lain yang Anda butuhkan...",
     "submitViaWhatsApp": "Kirim Konsultasi via WhatsApp",
     "directWhatsApp": "Hubungi Langsung via WA",
-    "clientNotice": "Formulir ini bertujuan untuk konsultasi awal dan tidak memungut biaya apapun. Bukan merupakan pemesanan, reservasi, atau konfirmasi transaksi."
+    "clientNotice": "Formulir ini bertujuan untuk konsultasi awal dan tidak memungut biaya apapun. Bukan merupakan pemesanan, reservasi, atau konfirmasi transaksi.",
+    "nameRequired": "Nama wajib diisi sebelum mengirim.",
+    "nameTooLong": "Nama maksimal 100 karakter.",
+    "topicLimitReached": "Maks. 3 topik yang dapat dipilih bersamaan.",
+    "topicRequiredForDehir": "Pilih minimal satu topik konsultasi.",
+    "pabuaranLocked": "Proyek ini masih dalam tahap persiapan dan belum membuka konsultasi proyek aktif.",
+    "generalConsultationNote": "Sampaikan pertanyaan umum Anda seputar properti, lokasi, atau anggaran. Tim marketing kami siap membantu.",
+    "name": "Nama Anda",
+    "namePlaceholderRequired": "Nama Anda (wajib diisi)"
   },
   "contactPage": {
     "title": "Hubungi Kami",
