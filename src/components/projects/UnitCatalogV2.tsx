@@ -69,7 +69,7 @@ export function UnitCatalogV2({ locale, project, units, labels }: UnitCatalogV2P
   return (
     <div className="flex flex-col">
       {/* Page Header — cream */}
-      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8 border-b border-neutral-200/80">
+      <div className="bg-gradient-to-b from-[#F7F4EE] via-[#F5F2EA] to-[#EEEAE1] px-4 py-9 sm:px-6 lg:px-8 border-b border-neutral-200/80">
         <div className="mx-auto max-w-7xl animate-fade-in-up">
           <Breadcrumb
             items={[
@@ -235,11 +235,11 @@ export function UnitCatalogV2({ locale, project, units, labels }: UnitCatalogV2P
                   return (
                     <article
                       key={unit.unitCode}
-                      className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs hover:shadow-md hover:border-primary-200 transition-all duration-200 hover:-translate-y-0.5"
+                      className="flex flex-col overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-xs hover:shadow-lg hover:border-primary-300/80 transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_8px_-1px_rgba(28,41,34,0.05),0_1px_3px_0_rgba(28,41,34,0.03),inset_0_1px_0_0_rgba(255,255,255,0.95)]"
                     >
                       {/* Smart Image with Fallback */}
                       <SmartImage
-                        src={`/images/units/${project.slug}/${unit.unitCode}.jpg`}
+                        src={unit.image ?? null}
                         alt={`Kavling ${unit.unitCode} - ${project.fullName}`}
                         aspectRatio="16/9"
                         placeholderType="image"

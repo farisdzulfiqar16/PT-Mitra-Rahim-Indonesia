@@ -364,7 +364,7 @@ function InterestFormContent({
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-8 animate-fade-in-up">
       {/* ── 1. Pilihan Proyek Properti ─────────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+      <section className="rounded-2xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)] space-y-4">
         <div>
           <h2 className="text-base font-bold text-neutral-900 block">
             {labels.projectSectionTitle}
@@ -385,8 +385,8 @@ function InterestFormContent({
             className={cn(
               "flex flex-col text-left rounded-xl p-4 border-2 transition-all min-h-[44px] cursor-pointer",
               isDehir
-                ? "border-primary-700 bg-primary-50/50 shadow-xs ring-1 ring-primary-700"
-                : "border-neutral-200 bg-white hover:border-neutral-300"
+                ? "border-primary-700 bg-primary-50/70 shadow-xs ring-2 ring-primary-700/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)]"
+                : "border-neutral-200/90 bg-white hover:border-primary-300 hover:shadow-2xs"
             )}
           >
             <div className="flex items-center justify-between w-full mb-1">
@@ -440,8 +440,8 @@ function InterestFormContent({
             className={cn(
               "flex flex-col text-left rounded-xl p-4 border-2 transition-all min-h-[44px] cursor-pointer",
               isGeneral
-                ? "border-primary-700 bg-primary-50/50 shadow-xs ring-1 ring-primary-700"
-                : "border-neutral-200 bg-white hover:border-neutral-300"
+                ? "border-primary-700 bg-primary-50/70 shadow-xs ring-2 ring-primary-700/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)]"
+                : "border-neutral-200/90 bg-white hover:border-primary-300 hover:shadow-2xs"
             )}
           >
             <div className="flex items-center justify-between w-full mb-1">
@@ -474,7 +474,7 @@ function InterestFormContent({
 
       {/* ── 2. Topik Konsultasi (hanya untuk Dehir) — P0-03 ─────────────────── */}
       {isDehir && (
-        <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section className="rounded-2xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)] space-y-4">
           <div>
             <h2 className="text-base font-bold text-neutral-900 block">
               {labels.consultationCategoryTitle}
@@ -523,20 +523,20 @@ function InterestFormContent({
                   aria-pressed={isSelected}
                   aria-disabled={isAtLimit}
                   className={cn(
-                    "flex items-center gap-2.5 rounded-xl border p-3 text-left text-xs font-medium transition-all min-h-[44px]",
+                    "flex items-center gap-2.5 rounded-xl border p-3 text-left text-xs font-medium transition-all duration-200 min-h-[44px]",
                     isSelected
-                      ? "border-primary-600 bg-primary-50 text-primary-900 font-semibold shadow-xs ring-1 ring-primary-500 cursor-pointer"
+                      ? "border-primary-600 bg-primary-50/80 text-primary-900 font-semibold shadow-xs ring-1 ring-primary-500/40 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] cursor-pointer"
                       : isAtLimit
-                      ? "border-neutral-200 bg-neutral-50/40 text-neutral-400 cursor-not-allowed opacity-60"
-                      : "border-neutral-200 bg-neutral-50/60 text-neutral-700 hover:border-neutral-300 hover:bg-neutral-100/70 cursor-pointer"
+                      ? "border-neutral-200/80 bg-neutral-50/40 text-neutral-400 cursor-not-allowed opacity-60"
+                      : "border-neutral-200/90 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/80 shadow-2xs cursor-pointer"
                   )}
                 >
                   <span
                     className={cn(
                       "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border transition-colors",
                       isSelected
-                        ? "border-primary-300 bg-primary-100/80 text-primary-800"
-                        : "border-neutral-200 bg-white text-neutral-500"
+                        ? "border-primary-300 bg-primary-100/90 text-primary-800"
+                        : "border-neutral-200 bg-neutral-50 text-neutral-500"
                     )}
                     aria-hidden="true"
                   >
@@ -563,7 +563,7 @@ function InterestFormContent({
 
       {/* ── 3. Preferensi Properti (hanya untuk Dehir) — P0-03 ──────────────── */}
       {isDehir && (
-        <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section className="rounded-2xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)] space-y-6">
           <div>
             <h2 className="text-base font-bold text-neutral-900 block">
               {labels.preferencesTitle}
@@ -733,7 +733,7 @@ function InterestFormContent({
       )}
 
       {/* ── 4. Detail & Identitas (P0-06) ───────────────────────────────────── */}
-      <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+      <section className="rounded-2xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)] space-y-4">
         <div>
           <h2 className="text-base font-bold text-neutral-900 block">
             {labels.clientDetailsTitle}

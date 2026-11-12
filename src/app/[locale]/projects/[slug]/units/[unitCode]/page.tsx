@@ -61,13 +61,15 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
   const ogLocale = OG_LOCALE[locale] ?? "id_ID";
 
-  const title = t("unitDetailTitle")
-    .replace("{unitCode}", unit.unitCode)
-    .replace("{projectName}", project.fullName);
-  const description = t("unitDetailDescription")
-    .replace("{unitCode}", unit.unitCode)
-    .replace("{projectName}", project.fullName)
-    .replace("{city}", project.location.city);
+  const title = t("unitDetailTitle", {
+    unitCode: unit.unitCode,
+    projectName: project.fullName,
+  });
+  const description = t("unitDetailDescription", {
+    unitCode: unit.unitCode,
+    projectName: project.fullName,
+    city: project.location.city,
+  });
 
   const alternates = buildAlternates(`/projects/${slug}/units/${unitCode}`, locale);
 

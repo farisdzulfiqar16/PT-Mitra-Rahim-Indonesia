@@ -34,7 +34,7 @@ export async function Navbar() {
 
   if (isV2) {
     return (
-      <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/95 backdrop-blur-md transition-all">
+      <header className="sticky top-0 z-50 border-b border-neutral-200/70 bg-white/92 backdrop-blur-md shadow-[0_2px_12px_-2px_rgba(28,41,34,0.04)] transition-all">
         <nav
           className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8"
           aria-label="Main navigation"
@@ -42,9 +42,9 @@ export async function Navbar() {
           {/* Brand Logo */}
           <Link
             href={`/${locale}`}
-            className="flex items-center gap-2 shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md"
+            className="flex items-center gap-2.5 shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-700 text-white font-black text-sm group-hover:bg-primary-600 transition-colors shadow-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-700 to-primary-800 text-white font-black text-sm group-hover:from-primary-600 group-hover:to-primary-700 transition-all shadow-xs border border-primary-600/30 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25)]">
               C
             </div>
             <div className="flex flex-col">
@@ -58,12 +58,12 @@ export async function Navbar() {
           </Link>
 
           {/* Desktop nav links */}
-          <div className="hidden items-center gap-7 md:flex">
+          <div className="hidden items-center gap-6 md:flex">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-sm font-medium text-neutral-600 hover:text-primary-700 transition-colors relative py-1 hover:-translate-y-0.5 duration-150"
+                className="text-sm font-medium text-neutral-600 hover:text-primary-700 hover:bg-neutral-100/60 rounded-md px-2.5 py-1.5 transition-all duration-150 relative"
               >
                 {label}
               </Link>

@@ -3,6 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Layered Shadows — Sage-tinted ambient (dipindah ke :root agar tidak di-parse sebagai Tailwind theme token) */
+  --shadow-2xs: 0 1px 2px 0 rgba(28, 41, 34, 0.04);
+  --shadow-xs: 0 1px 3px 0 rgba(28, 41, 34, 0.06), 0 1px 2px -1px rgba(28, 41, 34, 0.04);
+  --shadow-sm: 0 2px 5px -1px rgba(28, 41, 34, 0.06), 0 1px 3px -1px rgba(28, 41, 34, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(28, 41, 34, 0.07), 0 2px 6px -1px rgba(28, 41, 34, 0.04);
+  --shadow-lg: 0 10px 24px -4px rgba(28, 41, 34, 0.08), 0 4px 10px -2px rgba(28, 41, 34, 0.04);
+  --shadow-xl: 0 18px 36px -6px rgba(28, 41, 34, 0.10), 0 6px 14px -3px rgba(28, 41, 34, 0.05);
+  --shadow-2xl: 0 24px 48px -12px rgba(28, 41, 34, 0.16);
 }
 
 @theme inline {
@@ -59,6 +68,12 @@
   --color-whatsapp: #25D366;
   --color-whatsapp-hover: #1FB855;
   --color-whatsapp-text: #FFFFFF;
+
+  /* Premium Depth & Surface Tokens */
+  --color-surface-warm: #FAF8F5;
+  --color-surface-ivory: #F5F2EC;
+  --color-surface-sage: #F2F7F4;
+  --color-surface-dark: #1C3326;
 }
 
 body {
@@ -66,6 +81,50 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Layered card & surface depth utilities */
+.surface-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(229, 229, 229, 0.85);
+  box-shadow: 0 1px 3px 0 rgba(28, 41, 34, 0.04), 0 1px 2px -1px rgba(28, 41, 34, 0.02), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.surface-card-interactive {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.surface-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(28, 41, 34, 0.08), 0 4px 8px -2px rgba(28, 41, 34, 0.03);
+  border-color: rgba(107, 158, 132, 0.4);
+}
+
+/* Subtle ambient backdrop & lighting */
+.ambient-glow-hero {
+  background: radial-gradient(circle at 85% 25%, rgba(107, 158, 132, 0.12) 0%, rgba(245, 240, 232, 0.4) 45%, transparent 70%);
+}
+
+.ambient-glow-dark {
+  background: radial-gradient(circle at 50% 0%, rgba(107, 158, 132, 0.22) 0%, transparent 65%);
+}
+
+/* Tactile button active states */
+.btn-tactile {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px 0 rgba(28, 41, 34, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
+}
+
+.btn-tactile:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -1px rgba(28, 41, 34, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-tactile:active {
+  transform: translateY(0.5px) scale(0.99);
+  box-shadow: 0 1px 2px 0 rgba(28, 41, 34, 0.06);
 }
 
 /* Micro-interactions & subtle animations */

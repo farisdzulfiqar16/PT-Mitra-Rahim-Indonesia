@@ -60,12 +60,14 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
   const ogLocale = OG_LOCALE[locale] ?? "id_ID";
 
-  const title = t("explorationTitle")
-    .replace("{projectName}", project.fullName);
-  const description = t("explorationDescription")
-    .replace("{projectName}", project.fullName)
-    .replace("{city}", project.location.city)
-    .replace("{province}", project.location.province);
+  const title = t("explorationTitle", {
+    projectName: project.fullName,
+  });
+  const description = t("explorationDescription", {
+    projectName: project.fullName,
+    city: project.location.city,
+    province: project.location.province,
+  });
 
   const alternates = buildAlternates(`/projects/${slug}`, locale);
 
@@ -170,8 +172,8 @@ export default async function ExplorationPage({
           floorPlanInPreparation: tProject("floorPlanInPreparation"),
           floorPlanInPreparationDesc: tProject("floorPlanInPreparationDesc"),
           singleStoreyTag: tProject("singleStoreyTag"),
-          specBedrooms: tProject("specBedrooms"),
-          specBathrooms: tProject("specBathrooms"),
+          specBedrooms: (tProject.raw("specBedrooms") as string) || (locale === "en" ? "{count} Bedrooms" : "{count} Kamar Tidur"),
+          specBathrooms: (tProject.raw("specBathrooms") as string) || (locale === "en" ? "{count} Bathroom / Toilet" : "{count} Kamar Mandi / Toilet"),
           specLivingRoom: tProject("specLivingRoom"),
           specKitchen: tProject("specKitchen"),
           specFrontGarden: tProject("specFrontGarden"),
