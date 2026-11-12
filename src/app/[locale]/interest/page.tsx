@@ -71,7 +71,7 @@ export default async function InterestPage({
   return (
     <div className="flex flex-col">
       {/* Header — Cream background */}
-      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8 border-b border-neutral-200/80">
+      <div className="bg-gradient-to-b from-[#F7F4EE] via-[#F5F2EA] to-[#EEEAE1] px-4 py-9 sm:px-6 lg:px-8 border-b border-neutral-200/80">
         <div className="mx-auto max-w-4xl animate-fade-in-up">
           <Breadcrumb
             items={[
@@ -80,7 +80,7 @@ export default async function InterestPage({
             ]}
             className="mb-3"
           />
-          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl tracking-tight">
             {tForm("title")}
           </h1>
           <p className="mt-1 text-xs sm:text-sm text-neutral-600 max-w-2xl leading-relaxed">
@@ -90,10 +90,11 @@ export default async function InterestPage({
       </div>
 
       {/* Form Container */}
-      <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        <InterestForm
-          locale={locale}
-          availableUnitCodes={availableUnitCodes}
+      <div className="bg-[#FAF8F5] min-h-[70vh] py-10 sm:py-12 border-b border-neutral-200/70">
+        <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">
+          <InterestForm
+            locale={locale}
+            availableUnitCodes={availableUnitCodes}
           labels={{
             title: tForm("title"),
             subtitle: tForm("subtitle"),
@@ -141,5 +142,6 @@ export default async function InterestPage({
         />
       </div>
     </div>
+  </div>
   );
 }

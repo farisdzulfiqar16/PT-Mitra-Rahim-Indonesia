@@ -39,7 +39,7 @@ export function ProjectCatalogV2({ locale, projects, labels }: ProjectCatalogV2P
   return (
     <div className="flex flex-col">
       {/* Page header — cream background sesuai desain */}
-      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8 border-b border-neutral-200/80">
+      <div className="bg-gradient-to-b from-[#F7F4EE] via-[#F5F2EA] to-[#EEEAE1] px-4 py-9 sm:px-6 lg:px-8 border-b border-neutral-200/80">
         <div className="mx-auto max-w-7xl animate-fade-in-up">
           {/* Breadcrumb */}
           <Breadcrumb
@@ -49,42 +49,43 @@ export function ProjectCatalogV2({ locale, projects, labels }: ProjectCatalogV2P
             ]}
             className="mb-4"
           />
-          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">{labels.projects}</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl tracking-tight">{labels.projects}</h1>
           <p className="mt-1 text-sm text-neutral-500">{labels.activeCount}</p>
         </div>
       </div>
 
       {/* Project list — Render dinamis berdasarkan data */}
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {projects.length === 0 ? (
-          <div className="rounded-xl border border-neutral-200 bg-white p-8 text-center text-sm text-neutral-500">
-            {labels.emptyProjects || (locale === "en" ? "No projects available to display." : "Belum ada proyek yang dapat ditampilkan.")}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-5">
-            {projects.map((project) => {
-              const isActive = project.status === "active";
+      <div className="bg-[#FAF8F5] min-h-[60vh] py-10 sm:py-12 border-b border-neutral-200/70">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          {projects.length === 0 ? (
+            <div className="rounded-2xl border border-neutral-200/80 bg-white p-8 text-center text-sm text-neutral-500 shadow-xs">
+              {labels.emptyProjects || (locale === "en" ? "No projects available to display." : "Belum ada proyek yang dapat ditampilkan.")}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {projects.map((project) => {
+                const isActive = project.status === "active";
 
-              return (
-                <article
-                  key={project.id || project.slug}
-                  className={cn(
-                    "overflow-hidden rounded-xl border transition-all duration-300",
-                    isActive
-                      ? "group border-neutral-200 bg-white shadow-sm hover:shadow-md hover:border-primary-200"
-                      : "border-neutral-200 bg-neutral-50 opacity-80"
-                  )}
-                >
-                  <div className="flex flex-col sm:flex-row">
-                    {/* Image / Thumbnail with Smart Visual */}
-                    <div className="sm:w-72 shrink-0">
-                      <ProjectCardVisual
-                        project={project}
-                        locale={locale}
-                        aspectRatio="auto"
-                        className="h-48 w-full sm:h-full rounded-none border-0 border-b border-neutral-100 sm:border-b-0 sm:border-r"
-                      />
-                    </div>
+                return (
+                  <article
+                    key={project.id || project.slug}
+                    className={cn(
+                      "overflow-hidden rounded-2xl border transition-all duration-300",
+                      isActive
+                        ? "group border-neutral-200/80 bg-white shadow-xs hover:shadow-lg hover:border-primary-300/90 hover:-translate-y-1 shadow-[0_2px_8px_-1px_rgba(28,41,34,0.05),0_1px_3px_0_rgba(28,41,34,0.03),inset_0_1px_0_0_rgba(255,255,255,0.95)]"
+                        : "border-neutral-200/80 bg-white/90 shadow-2xs hover:shadow-md hover:border-neutral-300 hover:-translate-y-0.5 shadow-[0_1px_4px_0_rgba(28,41,34,0.03),inset_0_1px_0_0_rgba(255,255,255,0.9)] opacity-90"
+                    )}
+                  >
+                    <div className="flex flex-col sm:flex-row">
+                      {/* Image / Thumbnail with Smart Visual */}
+                      <div className="sm:w-80 shrink-0">
+                        <ProjectCardVisual
+                          project={project}
+                          locale={locale}
+                          aspectRatio="auto"
+                          className="h-52 w-full sm:h-full rounded-none border-0 border-b border-neutral-100 sm:border-b-0 sm:border-r"
+                        />
+                      </div>
 
                     {/* Info Column */}
                     <div className="flex flex-1 flex-col justify-between p-5">
@@ -150,5 +151,6 @@ export function ProjectCatalogV2({ locale, projects, labels }: ProjectCatalogV2P
         )}
       </div>
     </div>
+  </div>
   );
 }

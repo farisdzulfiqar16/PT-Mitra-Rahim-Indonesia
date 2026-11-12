@@ -11,15 +11,15 @@ export async function Footer() {
 
   if (isV2) {
     return (
-      <footer className="border-t border-neutral-100 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+      <footer className="border-t border-neutral-200/70 bg-[#FAF8F5]">
+        <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-3.5 sm:flex-row">
             <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-primary-700">{siteConfig.name}</span>
-              <span className="text-neutral-200">|</span>
-              <span className="text-xs text-neutral-400">{t("company")}</span>
+              <span className="text-sm font-bold tracking-tight text-primary-800">{siteConfig.name}</span>
+              <span className="text-neutral-300">|</span>
+              <span className="text-xs text-neutral-500 font-medium">{t("company")}</span>
             </div>
-            <p className="text-xs text-neutral-300">
+            <p className="text-xs text-neutral-400">
               © {new Date().getFullYear()} {siteConfig.name}. {t("rights")}.
             </p>
           </div>

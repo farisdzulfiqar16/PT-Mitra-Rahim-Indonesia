@@ -71,7 +71,7 @@ export function ProjectLocationMap({
     const embedUrl = `https://maps.google.com/maps?q=${embedQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
     return (
-      <div className={cn("overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs", className)}>
+      <div className={cn("overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.05),inset_0_1px_0_0_rgba(255,255,255,0.9)]", className)}>
         {/* Visual Map Frame */}
         <div className={cn("relative w-full bg-neutral-100 overflow-hidden", aspectClass)}>
           {/* Loading placeholder skeleton */}
@@ -99,7 +99,7 @@ export function ProjectLocationMap({
           />
 
           {/* Verified Location Badge Overlay */}
-          <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 rounded-md bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-neutral-800 shadow-xs backdrop-blur-xs border border-neutral-200/80">
+          <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded-lg bg-white/95 px-3 py-1.5 text-[11px] font-semibold text-neutral-800 shadow-xs backdrop-blur-md border border-neutral-200/90 shadow-[0_1px_4px_0_rgba(28,41,34,0.06)]">
             <ShieldCheck className="h-3.5 w-3.5 text-primary-700 stroke-[2]" aria-hidden="true" />
             <span>{isEn ? "Verified Project Location" : "Lokasi Proyek Terverifikasi"}</span>
           </div>
@@ -112,7 +112,7 @@ export function ProjectLocationMap({
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary-800 transition-colors shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 min-h-[40px]"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary-600 hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 min-h-[42px] border border-primary-800/40 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)]"
             >
               <Navigation className="h-4 w-4 stroke-[2]" aria-hidden="true" />
               <span>{defaultCtaLabel}</span>
@@ -126,10 +126,10 @@ export function ProjectLocationMap({
 
   // ── Kasus 2: Alamat dalam persiapan / tingkat kawasan (Jatiranggon / Pabuaran) ─
   return (
-    <div className={cn("overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs", className)}>
+    <div className={cn("overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.05),inset_0_1px_0_0_rgba(255,255,255,0.9)]", className)}>
       <div
         className={cn(
-          "relative flex flex-col items-center justify-center overflow-hidden bg-linear-to-br from-neutral-900 via-neutral-850 to-neutral-900 p-6 text-center text-white select-none",
+          "relative flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#1C2C24] via-[#16231D] to-[#101A15] p-6 text-center text-white select-none shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]",
           aspectClass
         )}
       >

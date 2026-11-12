@@ -89,7 +89,7 @@ export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Prop
   return (
     <div className="flex flex-col">
       {/* Page header — cream */}
-      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8 border-b border-neutral-200/80">
+      <div className="bg-gradient-to-b from-[#F7F4EE] via-[#F5F2EA] to-[#EEEAE1] px-4 py-9 sm:px-6 lg:px-8 border-b border-neutral-200/80">
         <div className="mx-auto max-w-7xl">
           <Breadcrumb
             items={[
@@ -126,17 +126,17 @@ export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Prop
               placeholderLabel={labels.photoPlaceholder}
               placeholderDescription={`${unit.unitCode} · ${project.fullName}`}
               priority
-              className="w-full rounded-xl border border-neutral-200 shadow-xs"
+              className="w-full rounded-2xl border border-neutral-200/90 shadow-md shadow-[0_4px_20px_-2px_rgba(28,41,34,0.06),inset_0_1px_0_0_rgba(255,255,255,0.95)]"
             />
             {/* Thumbnail row placeholder */}
             <div className="grid grid-cols-3 gap-2">
-              <Placeholder type="image" label="" className="aspect-square rounded-lg opacity-60" />
-              <Placeholder type="image" label="" className="aspect-square rounded-lg opacity-60" />
-              <Placeholder type="image" label="" className="aspect-square rounded-lg opacity-40" />
+              <Placeholder type="image" label="" className="aspect-square rounded-xl opacity-60" />
+              <Placeholder type="image" label="" className="aspect-square rounded-xl opacity-60" />
+              <Placeholder type="image" label="" className="aspect-square rounded-xl opacity-40" />
             </div>
 
             {/* Opsi Tipe Bangunan untuk Kavling Ini */}
-            <div className="rounded-xl border border-primary-100 bg-primary-50/50 p-4 text-xs text-neutral-700">
+            <div className="rounded-2xl border border-primary-200/80 bg-gradient-to-br from-primary-50/80 to-white p-5 text-xs text-neutral-700 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)]">
               <div className="flex items-center gap-2 mb-1.5">
                 <House className="h-4 w-4 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
                 <h3 className="font-bold text-neutral-900">
@@ -174,7 +174,7 @@ export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Prop
             </div>
 
             {/* Specs table */}
-            <dl className="divide-y divide-neutral-100 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xs">
+            <dl className="divide-y divide-neutral-100 overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)]">
               <div className="flex items-center justify-between px-4 py-3">
                 <dt className="text-sm text-neutral-500">{labels.code}</dt>
                 <dd className="text-sm font-semibold text-neutral-900">{unit.unitCode}</dd>

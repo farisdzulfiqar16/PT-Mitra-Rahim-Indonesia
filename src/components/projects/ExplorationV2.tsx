@@ -144,7 +144,7 @@ function ExplorationV2Content({
   return (
     <div className="flex flex-col">
       {/* ── Page Header — Cream ────────────────────────────────────────────── */}
-      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8 border-b border-neutral-200/80">
+      <div className="bg-gradient-to-b from-[#F7F4EE] via-[#F5F2EA] to-[#EEEAE1] px-4 py-9 sm:px-6 lg:px-8 border-b border-neutral-200/80">
         <div className="mx-auto max-w-7xl animate-fade-in-up">
           <Breadcrumb
             items={[
@@ -158,19 +158,19 @@ function ExplorationV2Content({
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="rounded-md bg-primary-100 px-2.5 py-0.5 text-xs font-semibold text-primary-800">
+                <span className="rounded-md bg-primary-100/90 border border-primary-200/80 px-2.5 py-0.5 text-xs font-semibold text-primary-800 shadow-2xs">
                   {project.name}
                 </span>
                 {project.propertyTypes?.map((pt) => (
                   <span
                     key={pt}
-                    className="rounded-md bg-white/80 border border-neutral-200 px-2 py-0.5 text-xs text-neutral-600 font-medium"
+                    className="rounded-md bg-white/90 border border-neutral-200/90 px-2 py-0.5 text-xs text-neutral-600 font-medium shadow-2xs"
                   >
                     {pt}
                   </span>
                 ))}
               </div>
-              <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+              <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl tracking-tight">
                 {project.fullName}
               </h1>
               {project.marketingTagline && (
@@ -202,7 +202,7 @@ function ExplorationV2Content({
             <div className="shrink-0">
               <Link
                 href={`/${locale}/projects/${project.slug}/units`}
-                className="inline-flex items-center gap-1.5 justify-center rounded-lg border border-primary-600 bg-primary-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary-800 transition-colors shadow-xs"
+                className="inline-flex items-center gap-1.5 justify-center rounded-lg border border-primary-800/40 bg-primary-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary-600 hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)]"
               >
                 <ClipboardList className="h-4 w-4 stroke-[2]" aria-hidden="true" />
                 <span>{labels.viewUnits}</span>
@@ -217,10 +217,10 @@ function ExplorationV2Content({
 
         {/* ── Banner Kontak Brosur Pemasaran ───────────────────────────────── */}
         {project.brochureCandidateContact && (
-          <div className="rounded-xl border border-primary-200/90 bg-primary-50/70 p-4 sm:p-5 text-neutral-800 shadow-xs">
+          <div className="rounded-2xl border border-primary-200/90 bg-gradient-to-br from-primary-50/80 to-white p-5 sm:p-6 text-neutral-800 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)]">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 text-primary-800 shadow-2xs">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100/90 text-primary-800 border border-primary-200/70 shadow-2xs">
                   <Phone className="h-5 w-5 stroke-[1.75]" aria-hidden="true" />
                 </div>
                 <div>
@@ -593,7 +593,7 @@ function UnitCard({
     : labels.unknown;
 
   return (
-    <article className="flex flex-col rounded-xl border border-neutral-200 bg-white shadow-xs overflow-hidden hover:shadow-md hover:border-primary-300 transition-all duration-200 hover:-translate-y-0.5">
+    <article className="flex flex-col rounded-2xl border border-neutral-200/80 bg-white shadow-xs overflow-hidden hover:shadow-lg hover:border-primary-300/80 transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_8px_-1px_rgba(28,41,34,0.05),0_1px_3px_0_rgba(28,41,34,0.03),inset_0_1px_0_0_rgba(255,255,255,0.95)]">
       {/* Smart Media Image with Automatic Fallback */}
       <SmartImage
         src={`/images/units/${project.slug}/${unit.unitCode}.jpg`}

@@ -43,7 +43,7 @@ export function ProjectCardVisual({
   // Celestia Jatiluhur (Dehir) — Menggunakan foto kurasi lapangan aktual
   if (isDehir) {
     return (
-      <div className={cn("relative overflow-hidden bg-neutral-100", className)}>
+      <div className={cn("relative overflow-hidden bg-neutral-100 ring-1 ring-inset ring-black/5", className)}>
         <SmartImage
           src="/images/projects/dehir/gallery/060_IMG_0354.jpg"
           alt={
@@ -54,13 +54,13 @@ export function ProjectCardVisual({
           aspectRatio={aspectRatio}
           priority={priority}
           className="w-full h-full"
-          imageClassName="transition-transform duration-500 group-hover:scale-105"
+          imageClassName="transition-transform duration-700 ease-out group-hover:scale-104"
           placeholderLabel={project.fullName}
           placeholderDescription={
             isEn ? "Field documentation photo" : "Dokumentasi foto lapangan"
           }
         />
-        <div className="absolute bottom-2 left-2 rounded-md bg-neutral-900/70 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-xs">
+        <div className="absolute bottom-3 left-3 rounded-md bg-neutral-900/80 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white backdrop-blur-md border border-white/15 shadow-sm shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
           {isEn ? "Actual Site Photo" : "Dokumentasi Lapangan"}
         </div>
       </div>
@@ -82,7 +82,7 @@ export function ProjectCardVisual({
   return (
     <div
       className={cn(
-        "relative flex flex-col items-center justify-center overflow-hidden border border-neutral-200/80 bg-linear-to-br from-neutral-900 via-neutral-850 to-neutral-900 p-6 text-center text-white select-none",
+        "relative flex flex-col items-center justify-center overflow-hidden border border-neutral-200/80 bg-gradient-to-br from-[#1C2C24] via-[#16231D] to-[#101A15] p-6 text-center text-white select-none shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]",
         aspectClass,
         className
       )}

@@ -87,7 +87,7 @@ export default async function ContactPage({
   return (
     <div className="flex flex-col">
       {/* Page Header — Cream background */}
-      <div className="bg-[#F5F2EC] px-4 py-8 sm:px-6 lg:px-8 border-b border-neutral-200/80">
+      <div className="bg-gradient-to-b from-[#F7F4EE] via-[#F5F2EA] to-[#EEEAE1] px-4 py-9 sm:px-6 lg:px-8 border-b border-neutral-200/80">
         <div className="mx-auto max-w-7xl animate-fade-in-up">
           <Breadcrumb
             items={[
@@ -96,7 +96,7 @@ export default async function ContactPage({
             ]}
             className="mb-3"
           />
-          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl tracking-tight">
             {t("title")}
           </h1>
           <p className="mt-1 text-sm text-neutral-600 max-w-2xl leading-relaxed">
@@ -111,9 +111,9 @@ export default async function ContactPage({
           {/* Left Column: Direct Contact, Owner Meeting & FAQs (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* Primary Marketing Card */}
-            <div className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-5 transition-all hover:shadow-sm">
+            <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)] space-y-5 transition-all hover:shadow-md hover:-translate-y-0.5">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
                   <MessageCircle className="h-6 w-6 stroke-[2]" aria-hidden="true" />
                 </div>
                 <div>
@@ -144,7 +144,7 @@ export default async function ContactPage({
             </div>
 
             {/* Owner Meeting Information Card */}
-            <div className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-7 shadow-xs space-y-3">
+            <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 sm:p-7 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)] space-y-3">
               <div className="flex items-start gap-3.5">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
                   <Users className="h-5 w-5 stroke-[2]" aria-hidden="true" />
@@ -166,7 +166,7 @@ export default async function ContactPage({
             </div>
 
             {/* Interest Form Referral Card */}
-            <div className="rounded-2xl border border-primary-200 bg-primary-50/60 p-6 sm:p-7 space-y-3">
+            <div className="rounded-2xl border border-primary-200/90 bg-gradient-to-br from-primary-50/80 to-white p-6 sm:p-7 space-y-3 shadow-xs shadow-[0_2px_8px_-1px_rgba(28,41,34,0.04),inset_0_1px_0_0_rgba(255,255,255,0.95)]">
               <div className="flex items-start gap-3.5">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 text-primary-700">
                   <ClipboardList className="h-5 w-5 stroke-[2]" aria-hidden="true" />
