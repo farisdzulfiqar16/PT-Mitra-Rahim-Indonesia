@@ -42,3 +42,7 @@ next-env.d.ts
 
 # Internal source photos - not for production
 /src/img/
+
+# Internal data files - not for public export
+src/data/internal/
+

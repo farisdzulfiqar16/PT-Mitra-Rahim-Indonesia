@@ -1,0 +1,57 @@
+# ── Celestia V1 — Apache Configuration (Rumahweb / Shared Hosting) ─────────
+# Generated for Next.js Static Export (output: "export")
+# Place this file in the DocumentRoot of the server alongside /out/ contents.
+
+Options -Indexes +FollowSymLinks
+DirectorySlash Off
+RewriteEngine On
+
+# ── 1. Real Physical Files Pass-Through ───────────────────────────────────
+# If an actual file exists physically (images, fonts, scripts, stylesheets,
+# icons, robots.txt, sitemap.xml), serve it directly.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# ── 2. Root Redirect to Default Locale ────────────────────────────────────
+# Direct requests to site root (/) redirect to default locale (/id)
+RewriteRule ^/?$ /id [R=302,L]
+
+# ── 3. Clean Extensionless HTML URL Rewrite ───────────────────────────────
+# Next.js static export generates .html files (e.g. /id.html, /id/projects.html)
+# alongside directory trees (/id/, /id/projects/).
+# In Apache mod_rewrite, RewriteRule regex is matched FIRST, populating $1.
+# RewriteCond then tests if %{DOCUMENT_ROOT}/$1.html exists as a physical file.
+# This check MUST precede any directory checks to prevent Apache from serving
+# empty directories without index.html (which results in 403 Forbidden).
+# Both with and without trailing slash (e.g. /id and /id/) match cleanly to $1.
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^(.+?)/?$ /$1.html [L]
+
+# ── 4. Physical Directory Fallback (Only if index.html actually exists) ────
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_FILENAME}/index.html -f
+RewriteRule ^ - [L]
+
+# ── 5. Custom 404 Error Document ──────────────────────────────────────────
+# Uses the verified pre-rendered static 404 error page from Next.js export
+ErrorDocument 404 /404.html
+
+# ── 6. Cache-Control Headers ──────────────────────────────────────────────
+<IfModule mod_headers.c>
+    # Versioned immutable assets (Next.js JS/CSS chunks, fonts, images)
+    <FilesMatch "\.(js|css|woff2|woff|ttf|png|jpg|jpeg|webp|svg|ico|gif)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # HTML files: always revalidate to ensure updates are visible immediately
+    <FilesMatch "\.html$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+    # Baseline Security Headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
