@@ -453,13 +453,23 @@ function ExplorationV2Content({
                       <div className="flex items-center gap-2 rounded-lg bg-neutral-50 p-2.5 text-neutral-700">
                         <BedDouble className="h-4 w-4 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
                         <span className="font-medium">
-                          {(labels.specBedrooms || "{count} Kamar Tidur").replace("{count}", String(bType.bedrooms))}
+                          {(labels.specBedrooms && !labels.specBedrooms.includes("project.spec")
+                            ? labels.specBedrooms
+                            : locale === "en"
+                            ? "{count} Bedrooms"
+                            : "{count} Kamar Tidur"
+                          ).replace("{count}", String(bType.bedrooms))}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 rounded-lg bg-neutral-50 p-2.5 text-neutral-700">
                         <Bath className="h-4 w-4 text-primary-700 shrink-0 stroke-[1.75]" aria-hidden="true" />
                         <span className="font-medium">
-                          {(labels.specBathrooms || "{count} Kamar Mandi / Toilet").replace("{count}", String(bType.toilets))}
+                          {(labels.specBathrooms && !labels.specBathrooms.includes("project.spec")
+                            ? labels.specBathrooms
+                            : locale === "en"
+                            ? "{count} Bathroom / Toilet"
+                            : "{count} Kamar Mandi / Toilet"
+                          ).replace("{count}", String(bType.toilets))}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 rounded-lg bg-neutral-50 p-2.5 text-neutral-700">
@@ -596,7 +606,7 @@ function UnitCard({
     <article className="flex flex-col rounded-2xl border border-neutral-200/80 bg-white shadow-xs overflow-hidden hover:shadow-lg hover:border-primary-300/80 transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_8px_-1px_rgba(28,41,34,0.05),0_1px_3px_0_rgba(28,41,34,0.03),inset_0_1px_0_0_rgba(255,255,255,0.95)]">
       {/* Smart Media Image with Automatic Fallback */}
       <SmartImage
-        src={`/images/units/${project.slug}/${unit.unitCode}.jpg`}
+        src={unit.image ?? null}
         alt={`Kavling ${unit.unitCode} - ${project.fullName}`}
         aspectRatio="16/9"
         placeholderType="image"

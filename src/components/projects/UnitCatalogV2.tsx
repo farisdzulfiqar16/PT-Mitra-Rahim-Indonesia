@@ -239,7 +239,7 @@ export function UnitCatalogV2({ locale, project, units, labels }: UnitCatalogV2P
                     >
                       {/* Smart Image with Fallback */}
                       <SmartImage
-                        src={`/images/units/${project.slug}/${unit.unitCode}.jpg`}
+                        src={unit.image ?? null}
                         alt={`Kavling ${unit.unitCode} - ${project.fullName}`}
                         aspectRatio="16/9"
                         placeholderType="image"

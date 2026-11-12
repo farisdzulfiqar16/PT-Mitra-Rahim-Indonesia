@@ -86,6 +86,12 @@ export interface PropertyUnit {
   notes?: string;
 
   /**
+   * Path gambar resmi unit (jika sudah tersedia).
+   * null / undefined = gambar belum tersedia, gunakan placeholder.
+   */
+  image?: string | null;
+
+  /**
    * Referensi harga historis dari brosur pemasaran awal.
    * Bersifat internal / referensi historis, tidak ditampilkan sebagai harga jual aktif.
    */

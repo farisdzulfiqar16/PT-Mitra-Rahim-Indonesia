@@ -119,7 +119,7 @@ export function UnitDetailV2({ locale, project, unit, labels }: UnitDetailV2Prop
           {/* Left: image with smart fallback */}
           <div className="space-y-4">
             <SmartImage
-              src={`/images/units/${project.slug}/${unit.unitCode}.jpg`}
+              src={unit.image ?? null}
               alt={`Foto Unit ${unit.unitCode} - ${project.fullName}`}
               aspectRatio="4/3"
               placeholderType="image"
