@@ -124,13 +124,19 @@ export default async function InterestPage({
             undecided: tForm("undecided"),
             clientDetailsTitle: tForm("clientDetailsTitle"),
             name: tForm("name"),
-            namePlaceholder: tForm("namePlaceholder"),
+            namePlaceholder: tForm("namePlaceholderRequired"),
             notes: tForm("notes"),
             notesPlaceholder: tForm("notesPlaceholder"),
             submitViaWhatsApp: tForm("submitViaWhatsApp"),
             directWhatsApp: tForm("directWhatsApp"),
             clientNotice: tForm("clientNotice"),
             waDisabled: tWa("disabled"),
+            nameRequired: tForm("nameRequired"),
+            nameTooLong: tForm("nameTooLong"),
+            topicLimitReached: tForm("topicLimitReached"),
+            topicRequiredForDehir: tForm("topicRequiredForDehir"),
+            pabuaranLocked: tForm("pabuaranLocked"),
+            generalConsultationNote: tForm("generalConsultationNote"),
           }}
         />
       </div>

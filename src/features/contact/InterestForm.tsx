@@ -17,6 +17,7 @@ import {
   Check,
   MessageCircle,
   ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 import {
   buildWhatsAppUrl,
@@ -25,6 +26,9 @@ import {
 import { WhatsAppButton } from "@/features/contact/WhatsAppButton";
 import { cn } from "@/lib/utils";
 import type { InterestFormData } from "@/types";
+
+// ─── Max topic selections (P0-04) ────────────────────────────────────────────
+const MAX_TOPICS = 3;
 
 export interface InterestFormLabels {
   title: string;
@@ -63,6 +67,13 @@ export interface InterestFormLabels {
   directWhatsApp: string;
   clientNotice: string;
   waDisabled: string;
+  // P0 additions
+  nameRequired: string;
+  nameTooLong: string;
+  topicLimitReached: string;
+  topicRequiredForDehir: string;
+  pabuaranLocked: string;
+  generalConsultationNote: string;
 }
 
 export interface InterestFormProps {
@@ -85,7 +96,154 @@ interface CategoryOption {
 }
 
 /**
- * Komponen form utama yang di-key ulang secara otomatis saat query parameters berubah.
+ * Derive initial projectId from query parameters.
+ *
+ * Rules (P0-01, P0-02):
+ * - No param → "general" (never default to "dehir")
+ * - param=dehir → "dehir"
+ * - param=pabuaran → "general" (Pabuaran is locked; silently reject)
+ * - Any other → "general"
+ */
+function deriveInitialProjectId(paramProject: string): string {
+  if (paramProject === "dehir") return "dehir";
+  // P0-02: reject pabuaran via URL — fall back to general
+  return "general";
+}
+
+/**
+ * State reset helpers for P0-07.
+ */
+function resetToDehirDefaults(
+  prev: InterestFormData,
+  initialUnit: string,
+): InterestFormData {
+  return {
+    ...prev,
+    projectId: "dehir",
+    // Restore a sensible default topic set, don't carry stale general state
+    consultationCategories: ["price"],
+    propertyType: "kavling-only",
+    kavlingCode: initialUnit,
+    buildingType: "undecided",
+  };
+}
+
+function resetToGeneralDefaults(prev: InterestFormData): InterestFormData {
+  return {
+    ...prev,
+    projectId: "general",
+    // P0-03 / P0-07: clear all project-specific fields
+    consultationCategories: [],
+    propertyType: "undecided",
+    kavlingCode: "",
+    buildingType: "undecided",
+  };
+}
+
+/**
+ * Compose WhatsApp message according to consultation type.
+ * P0-05: separate templates for Dehir, General, and Pabuaran is blocked.
+ */
+function buildMessage(
+  formData: InterestFormData,
+  labels: InterestFormLabels,
+  consultationCategories: CategoryOption[],
+  locale: string,
+): string {
+  const isEn = locale === "en";
+  const nameText = formData.name?.trim().slice(0, 100) || (isEn ? "-" : "-");
+  const notesText = formData.notes?.trim().slice(0, 1000) || (isEn ? "-" : "-");
+
+  // ── Dehir template ────────────────────────────────────────────────────────
+  if (formData.projectId === "dehir") {
+    const topicsText =
+      (formData.consultationCategories || [])
+        .map((id) => consultationCategories.find((c) => c.id === id)?.label ?? id)
+        .join(", ") || (isEn ? "General Inquiry" : "Konsultasi Umum");
+
+    let propTypeText: string;
+    if (formData.propertyType === "kavling-only") {
+      propTypeText = labels.kavlingOnly;
+    } else if (formData.propertyType === "kavling-building") {
+      propTypeText = labels.kavlingBuilding;
+    } else {
+      propTypeText = labels.propertyUndecided;
+    }
+
+    let buildingText = "-";
+    if (formData.propertyType === "kavling-building") {
+      if (formData.buildingType === "type-1") {
+        buildingText = isEn
+          ? "Type 1 Floor (46 m², 3BR)"
+          : "Type 1 Lantai (LB 46 m², 3KT)";
+      } else if (formData.buildingType === "type-1-promo") {
+        buildingText = isEn
+          ? "Type 1 Floor Promo (30 m², 2BR)"
+          : "Type 1 Lantai Promo (LB 30 m², 2KT)";
+      } else {
+        buildingText = labels.undecided;
+      }
+    }
+
+    const kavlingText = formData.kavlingCode
+      ? `${formData.kavlingCode} (${isEn ? "Initial Preference" : "Preferensi Awal"})`
+      : "-";
+
+    if (isEn) {
+      return (
+        `Hello Celestia Marketing Team (PT Mitra Rahim Indonesia),\n\n` +
+        `I would like to submit a property consultation inquiry:\n\n` +
+        `• Project: ${labels.projectDehir}\n` +
+        `• Consultation Topics: ${topicsText}\n` +
+        `• Property Interest: ${propTypeText}\n` +
+        `• Plot Reference: ${kavlingText}\n` +
+        `• Building Type: ${buildingText}\n` +
+        `• Name: ${nameText}\n` +
+        `• Notes / Questions: ${notesText}\n\n` +
+        `Please provide further information. Thank you.`
+      );
+    }
+
+    return (
+      `Halo Tim Marketing Celestia (PT Mitra Rahim Indonesia),\n\n` +
+      `Saya ingin menyampaikan minat dan pertanyaan konsultasi properti:\n\n` +
+      `• Proyek: ${labels.projectDehir}\n` +
+      `• Topik Konsultasi: ${topicsText}\n` +
+      `• Minat Jenis: ${propTypeText}\n` +
+      `• Referensi Kavling: ${kavlingText}\n` +
+      `• Tipe Bangunan: ${buildingText}\n` +
+      `• Nama: ${nameText}\n` +
+      `• Catatan / Pertanyaan: ${notesText}\n\n` +
+      `Mohon informasi lebih lanjut. Terima kasih.`
+    );
+  }
+
+  // ── General consultation template (P0-05-B) ───────────────────────────────
+  // No kavling code, building type, or property preferences
+  if (isEn) {
+    return (
+      `Hello Celestia Marketing Team (PT Mitra Rahim Indonesia),\n\n` +
+      `I would like to have a general property consultation:\n\n` +
+      `• Consultation Type: General Consultation\n` +
+      `• Name: ${nameText}\n` +
+      `• Questions / Notes: ${notesText}\n\n` +
+      `Please provide further information. Thank you.`
+    );
+  }
+
+  return (
+    `Halo Tim Marketing Celestia (PT Mitra Rahim Indonesia),\n\n` +
+    `Saya ingin melakukan konsultasi properti secara umum:\n\n` +
+    `• Jenis Konsultasi: Konsultasi Umum\n` +
+    `• Nama: ${nameText}\n` +
+    `• Pertanyaan / Catatan: ${notesText}\n\n` +
+    `Mohon informasi lebih lanjut. Terima kasih.`
+  );
+}
+
+/**
+ * Core form component.
+ * Re-keyed from parent when query params change so state resets cleanly.
  */
 function InterestFormContent({
   locale,
@@ -94,21 +252,16 @@ function InterestFormContent({
   paramProject,
   paramUnit,
 }: InterestFormContentProps) {
-  // Menentukan default projectId dari query URL jika ada
-  const initialProjectId =
-    paramProject === "dehir"
-      ? "dehir"
-      : paramProject === "pabuaran"
-      ? "pabuaran"
-      : paramProject
-      ? "general"
-      : "dehir";
-
-  const initialUnit = availableUnitCodes.includes(paramUnit) ? paramUnit : "";
+  const initialProjectId = deriveInitialProjectId(paramProject);
+  const initialUnit =
+    initialProjectId === "dehir" && availableUnitCodes.includes(paramUnit)
+      ? paramUnit
+      : "";
 
   const [formData, setFormData] = useState<InterestFormData>({
     projectId: initialProjectId,
-    consultationCategories: ["price"],
+    // P0-01: no default category when starting as general
+    consultationCategories: initialProjectId === "dehir" ? ["price"] : [],
     propertyType: "kavling-only",
     kavlingCode: initialUnit,
     buildingType: "undecided",
@@ -116,8 +269,18 @@ function InterestFormContent({
     notes: "",
   });
 
+  // Validation error state (P0-06)
+  const [errors, setErrors] = useState<{
+    name?: string;
+    topics?: string;
+  }>({});
+
+  // Toast/inline feedback for topic limit (P0-04)
+  const [topicLimitHit, setTopicLimitHit] = useState(false);
+
   const isWaPlaceholder = isWhatsAppNumberPlaceholder();
   const [submittedUrl, setSubmittedUrl] = useState<string | null>(null);
+  const isEn = locale === "en";
 
   const consultationCategories: CategoryOption[] = [
     { id: "price", label: labels.catPrice, icon: CircleDollarSign },
@@ -128,106 +291,100 @@ function InterestFormContent({
     { id: "other", label: labels.catOther, icon: HelpCircle },
   ];
 
+  // ── P0-04: Toggle category with hard max-3 guard ─────────────────────────
   const toggleCategory = (id: string) => {
+    setTopicLimitHit(false);
+    setErrors((prev) => ({ ...prev, topics: undefined }));
+
     setFormData((prev) => {
-      const current = prev.consultationCategories || [];
+      const current = prev.consultationCategories ?? [];
       const exists = current.includes(id);
-      const updated = exists
-        ? current.filter((item) => item !== id)
-        : [...current, id];
-      return {
-        ...prev,
-        consultationCategories: updated.length > 0 ? updated : [id],
-      };
+
+      if (exists) {
+        // Always allow deselect — but never drop to empty (we guard at submit)
+        return { ...prev, consultationCategories: current.filter((item) => item !== id) };
+      }
+
+      // Reject if already at limit
+      if (current.length >= MAX_TOPICS) {
+        setTopicLimitHit(true);
+        return prev; // no change
+      }
+
+      return { ...prev, consultationCategories: [...current, id] };
     });
   };
 
-  const compileWhatsAppMessage = (): string => {
-    let projectText = labels.projectGeneral;
-    if (formData.projectId === "dehir") {
-      projectText = labels.projectDehir;
-    } else if (formData.projectId === "pabuaran") {
-      projectText = labels.projectPabuaran;
+  // ── P0-07: Project switch handlers ───────────────────────────────────────
+  const selectDehir = () => {
+    setErrors({});
+    setTopicLimitHit(false);
+    setFormData((prev) => resetToDehirDefaults(prev, initialUnit));
+  };
+
+  const selectGeneral = () => {
+    setErrors({});
+    setTopicLimitHit(false);
+    setFormData((prev) => resetToGeneralDefaults(prev));
+  };
+
+  // ── P0-06: Validate before submit ────────────────────────────────────────
+  const validate = (): boolean => {
+    const newErrors: { name?: string; topics?: string } = {};
+
+    const trimmedName = formData.name?.trim() ?? "";
+    if (!trimmedName) {
+      newErrors.name = labels.nameRequired;
+    } else if (trimmedName.length > 100) {
+      newErrors.name = labels.nameTooLong;
     }
 
-    const selectedCategoriesText = (formData.consultationCategories || [])
-      .map((catId) => {
-        const found = consultationCategories.find((c) => c.id === catId);
-        return found ? found.label : catId;
-      })
-      .join(", ") || "Konsultasi Umum";
-
-    let propTypeText = labels.propertyUndecided;
-    if (formData.propertyType === "kavling-only") {
-      propTypeText = labels.kavlingOnly;
-    } else if (formData.propertyType === "kavling-building") {
-      propTypeText = labels.kavlingBuilding;
+    if (formData.projectId === "dehir" && (formData.consultationCategories ?? []).length === 0) {
+      newErrors.topics = labels.topicRequiredForDehir;
     }
 
-    let buildingText = "-";
-    if (formData.propertyType === "kavling-building") {
-      if (formData.buildingType === "type-1") {
-        buildingText = "Type 1 Lantai (LB 46 m², 3KT)";
-      } else if (formData.buildingType === "type-1-promo") {
-        buildingText = "Type 1 Lantai Promo (LB 30 m², 2KT)";
-      } else {
-        buildingText = labels.undecided;
-      }
-    }
-
-    const kavlingText =
-      formData.projectId === "dehir" && formData.kavlingCode
-        ? `${formData.kavlingCode} (Preferensi Awal)`
-        : "-";
-
-    // Sanitasi & batasi panjang teks untuk mencegah URL overflow pada WhatsApp handoff
-    const nameText = formData.name?.trim() ? formData.name.trim().slice(0, 100) : "-";
-    const notesText = formData.notes?.trim() ? formData.notes.trim().slice(0, 1000) : "-";
-
-    return (
-      `Halo Tim Marketing Celestia (PT Mitra Rahim Indonesia),\n\n` +
-      `Saya ingin menyampaikan minat dan pertanyaan konsultasi properti:\n\n` +
-      `• Proyek: ${projectText}\n` +
-      `• Topik Konsultasi: ${selectedCategoriesText}\n` +
-      `• Minat Jenis: ${propTypeText}\n` +
-      `• Referensi Kavling: ${kavlingText}\n` +
-      `• Tipe Bangunan: ${buildingText}\n` +
-      `• Nama: ${nameText}\n` +
-      `• Catatan / Pertanyaan: ${notesText}\n\n` +
-      `Mohon informasi lebih lanjut. Terima kasih.`
-    );
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isWaPlaceholder) return;
-    const message = compileWhatsAppMessage();
+    if (!validate()) return;
+
+    const message = buildMessage(formData, labels, consultationCategories, locale);
     const url = buildWhatsAppUrl(message);
     setSubmittedUrl(url);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  const isDehir = formData.projectId === "dehir";
+  const isGeneral = formData.projectId === "general";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 animate-fade-in-up">
-      {/* 1. Pilihan Proyek Properti */}
+    <form onSubmit={handleSubmit} noValidate className="space-y-8 animate-fade-in-up">
+      {/* ── 1. Pilihan Proyek Properti ─────────────────────────────────────── */}
       <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
         <div>
           <h2 className="text-base font-bold text-neutral-900 block">
             {labels.projectSectionTitle}
           </h2>
           <p className="text-xs text-neutral-500 mt-0.5">
-            Tentukan proyek yang ingin Anda tanyakan atau pilih konsultasi umum.
+            {isEn
+              ? "Choose the project you want to inquire about, or select general consultation."
+              : "Tentukan proyek yang ingin Anda tanyakan atau pilih konsultasi umum."}
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Celestia Dehir */}
+          {/* Celestia Dehir — Active */}
           <button
             type="button"
-            onClick={() => setFormData((prev) => ({ ...prev, projectId: "dehir" }))}
+            onClick={selectDehir}
+            aria-pressed={isDehir}
             className={cn(
               "flex flex-col text-left rounded-xl p-4 border-2 transition-all min-h-[44px] cursor-pointer",
-              formData.projectId === "dehir"
+              isDehir
                 ? "border-primary-700 bg-primary-50/50 shadow-xs ring-1 ring-primary-700"
                 : "border-neutral-200 bg-white hover:border-neutral-300"
             )}
@@ -237,63 +394,52 @@ function InterestFormContent({
                 <Building2 className="w-5 h-5 stroke-[2]" aria-hidden="true" />
               </div>
               <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800">
-                Proyek Aktif
+                {isEn ? "Active Project" : "Proyek Aktif"}
               </span>
             </div>
             <span className="font-bold text-neutral-900 text-sm mt-1">
               {labels.projectDehir}
             </span>
             <span className="text-[11px] text-neutral-500 mt-1">
-              Jatiluhur, Jawa Barat • Kavling & Rumah Siap Huni
+              {isEn
+                ? "Jatiluhur, West Java • Plots & Houses"
+                : "Jatiluhur, Jawa Barat • Kavling & Rumah Siap Huni"}
             </span>
           </button>
 
-          {/* Celestia Jatiranggon / Pabuaran */}
-          <button
-            type="button"
-            onClick={() =>
-              setFormData((prev) => ({
-                ...prev,
-                projectId: "pabuaran",
-                kavlingCode: "",
-              }))
-            }
+          {/* Celestia Jatiranggon / Pabuaran — LOCKED (P0-02) */}
+          <div
+            aria-disabled="true"
+            title={labels.pabuaranLocked}
             className={cn(
-              "flex flex-col text-left rounded-xl p-4 border-2 transition-all min-h-[44px] cursor-pointer",
-              formData.projectId === "pabuaran"
-                ? "border-primary-700 bg-primary-50/50 shadow-xs ring-1 ring-primary-700"
-                : "border-neutral-200 bg-white hover:border-neutral-300"
+              "flex flex-col text-left rounded-xl p-4 border-2 transition-all min-h-[44px]",
+              "border-neutral-200 bg-neutral-50/80 opacity-60 cursor-not-allowed select-none"
             )}
           >
             <div className="flex items-center justify-between w-full mb-1">
-              <div className="rounded-lg bg-neutral-100 p-2 text-neutral-600">
+              <div className="rounded-lg bg-neutral-100 p-2 text-neutral-500">
                 <Clock className="w-5 h-5 stroke-[2]" aria-hidden="true" />
               </div>
-              <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold text-neutral-700">
+              <span className="rounded-full bg-neutral-200 px-2 py-0.5 text-[10px] font-semibold text-neutral-600">
                 Coming Soon
               </span>
             </div>
-            <span className="font-bold text-neutral-900 text-sm mt-1">
+            <span className="font-bold text-neutral-500 text-sm mt-1">
               {labels.projectPabuaran}
             </span>
-            <span className="text-[11px] text-neutral-500 mt-1">
-              Jatiranggon • Tahap Persiapan Kawasan
+            <span className="text-[11px] text-neutral-400 mt-1">
+              {isEn ? "Master Plan Preparation — Not Yet Open" : "Persiapan Master Plan — Belum Dibuka"}
             </span>
-          </button>
+          </div>
 
           {/* Konsultasi Umum */}
           <button
             type="button"
-            onClick={() =>
-              setFormData((prev) => ({
-                ...prev,
-                projectId: "general",
-                kavlingCode: "",
-              }))
-            }
+            onClick={selectGeneral}
+            aria-pressed={isGeneral}
             className={cn(
               "flex flex-col text-left rounded-xl p-4 border-2 transition-all min-h-[44px] cursor-pointer",
-              formData.projectId === "general"
+              isGeneral
                 ? "border-primary-700 bg-primary-50/50 shadow-xs ring-1 ring-primary-700"
                 : "border-neutral-200 bg-white hover:border-neutral-300"
             )}
@@ -303,135 +449,184 @@ function InterestFormContent({
                 <Sparkles className="w-5 h-5 stroke-[2]" aria-hidden="true" />
               </div>
               <span className="rounded-full bg-primary-100 px-2 py-0.5 text-[10px] font-semibold text-primary-800">
-                Fleksibel
+                {isEn ? "Flexible" : "Fleksibel"}
               </span>
             </div>
             <span className="font-bold text-neutral-900 text-sm mt-1">
               {labels.projectGeneral}
             </span>
             <span className="text-[11px] text-neutral-500 mt-1">
-              Diskusi umum mengenai lokasi, anggaran, atau rencana pengembangan
+              {isEn
+                ? "General discussion on location, budget, or development plans"
+                : "Diskusi umum mengenai lokasi, anggaran, atau rencana pengembangan"}
             </span>
           </button>
         </div>
+
+        {/* P0-02: Pabuaran locked notice when user arrives with ?project=pabuaran */}
+        {paramProject === "pabuaran" && (
+          <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+            <Info className="w-4 h-4 shrink-0 text-amber-700 mt-0.5" aria-hidden="true" />
+            <span>{labels.pabuaranLocked}</span>
+          </div>
+        )}
       </section>
 
-      {/* 2. Topik Kebutuhan Konsultasi (Multi-Select Pills) */}
-      <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
-        <div>
-          <h2 className="text-base font-bold text-neutral-900 block">
-            {labels.consultationCategoryTitle}
-          </h2>
-          <p className="text-xs text-neutral-500 mt-0.5">
-            {labels.consultationCategorySubtitle}
-          </p>
-        </div>
+      {/* ── 2. Topik Konsultasi (hanya untuk Dehir) — P0-03 ─────────────────── */}
+      {isDehir && (
+        <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+          <div>
+            <h2 className="text-base font-bold text-neutral-900 block">
+              {labels.consultationCategoryTitle}
+            </h2>
+            <p className="text-xs text-neutral-500 mt-0.5">
+              {isEn
+                ? `${labels.consultationCategorySubtitle} (max. ${MAX_TOPICS})`
+                : `${labels.consultationCategorySubtitle} (maks. ${MAX_TOPICS} topik)`}
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-          {consultationCategories.map((cat) => {
-            const isSelected = (formData.consultationCategories || []).includes(cat.id);
-            const Icon = cat.icon;
-            return (
+          {/* P0-04: Topic limit feedback */}
+          {topicLimitHit && (
+            <div
+              role="alert"
+              className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900"
+            >
+              <AlertCircle className="h-4 w-4 shrink-0 text-amber-700" aria-hidden="true" />
+              <span>{labels.topicLimitReached}</span>
+            </div>
+          )}
+
+          {errors.topics && (
+            <div
+              role="alert"
+              className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-800"
+            >
+              <AlertCircle className="h-4 w-4 shrink-0 text-red-600" aria-hidden="true" />
+              <span>{errors.topics}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+            {consultationCategories.map((cat) => {
+              const isSelected = (formData.consultationCategories ?? []).includes(cat.id);
+              const currentCount = (formData.consultationCategories ?? []).length;
+              // P0-04: visually indicate disabled state when at limit and not selected
+              const isAtLimit = !isSelected && currentCount >= MAX_TOPICS;
+              const Icon = cat.icon;
+
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => toggleCategory(cat.id)}
+                  aria-pressed={isSelected}
+                  aria-disabled={isAtLimit}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-xl border p-3 text-left text-xs font-medium transition-all min-h-[44px]",
+                    isSelected
+                      ? "border-primary-600 bg-primary-50 text-primary-900 font-semibold shadow-xs ring-1 ring-primary-500 cursor-pointer"
+                      : isAtLimit
+                      ? "border-neutral-200 bg-neutral-50/40 text-neutral-400 cursor-not-allowed opacity-60"
+                      : "border-neutral-200 bg-neutral-50/60 text-neutral-700 hover:border-neutral-300 hover:bg-neutral-100/70 cursor-pointer"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border transition-colors",
+                      isSelected
+                        ? "border-primary-300 bg-primary-100/80 text-primary-800"
+                        : "border-neutral-200 bg-white text-neutral-500"
+                    )}
+                    aria-hidden="true"
+                  >
+                    <Icon className="h-4 w-4 stroke-[1.75]" />
+                  </span>
+                  <span className="flex-1">{cat.label}</span>
+                  <span
+                    className={cn(
+                      "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px]",
+                      isSelected
+                        ? "border-primary-600 bg-primary-600 text-white"
+                        : "border-neutral-300 bg-white"
+                    )}
+                    aria-hidden="true"
+                  >
+                    {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ── 3. Preferensi Properti (hanya untuk Dehir) — P0-03 ──────────────── */}
+      {isDehir && (
+        <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+          <div>
+            <h2 className="text-base font-bold text-neutral-900 block">
+              {labels.preferencesTitle}
+            </h2>
+            <p className="text-xs text-neutral-500 mt-0.5">
+              {isEn
+                ? "Help us understand the physical preferences you may be considering (optional)."
+                : "Bantu kami memahami preferensi fisik yang mungkin Anda pertimbangkan (opsional)."}
+            </p>
+          </div>
+
+          {/* Minat Jenis Properti */}
+          <div>
+            <label className="text-xs font-semibold text-neutral-700 block mb-2">
+              {labels.propertyTypeLabel}
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
-                key={cat.id}
                 type="button"
-                onClick={() => toggleCategory(cat.id)}
+                onClick={() => setFormData((prev) => ({ ...prev, propertyType: "kavling-only" }))}
+                aria-pressed={formData.propertyType === "kavling-only"}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-xl border p-3 text-left text-xs font-medium transition-all min-h-[44px] cursor-pointer",
-                  isSelected
-                    ? "border-primary-600 bg-primary-50 text-primary-900 font-semibold shadow-xs ring-1 ring-primary-500"
-                    : "border-neutral-200 bg-neutral-50/60 text-neutral-700 hover:border-neutral-300 hover:bg-neutral-100/70"
+                  "inline-flex items-center gap-2 rounded-lg border p-3 text-left text-xs transition-all cursor-pointer min-h-[44px]",
+                  formData.propertyType === "kavling-only"
+                    ? "border-primary-600 bg-primary-50 text-primary-900 font-bold ring-1 ring-primary-500"
+                    : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
                 )}
               >
-                <span
-                  className={cn(
-                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border transition-colors",
-                    isSelected
-                      ? "border-primary-300 bg-primary-100/80 text-primary-800"
-                      : "border-neutral-200 bg-white text-neutral-600"
-                  )}
-                  aria-hidden="true"
-                >
-                  <Icon className="h-4 w-4 stroke-[1.75]" />
-                </span>
-                <span className="flex-1">{cat.label}</span>
-                <span
-                  className={cn(
-                    "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px]",
-                    isSelected
-                      ? "border-primary-600 bg-primary-600 text-white"
-                      : "border-neutral-300 bg-white"
-                  )}
-                >
-                  {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" aria-hidden="true" />}
-                </span>
+                <Map className="w-4 h-4 shrink-0 text-primary-700 stroke-[2]" aria-hidden="true" />
+                <span>{labels.kavlingOnly}</span>
               </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 3. Preferensi Properti (Opsional) */}
-      <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
-        <div>
-          <h2 className="text-base font-bold text-neutral-900 block">
-            {labels.preferencesTitle}
-          </h2>
-          <p className="text-xs text-neutral-500 mt-0.5">
-            Bantu kami memahami preferensi fisik yang mungkin Anda pertimbangkan (opsional).
-          </p>
-        </div>
-
-        {/* Minat Jenis Properti */}
-        <div>
-          <label className="text-xs font-semibold text-neutral-700 block mb-2">
-            {labels.propertyTypeLabel}
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <button
-              type="button"
-              onClick={() => setFormData((prev) => ({ ...prev, propertyType: "kavling-only" }))}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-lg border p-3 text-left text-xs transition-all cursor-pointer min-h-[44px]",
-                formData.propertyType === "kavling-only"
-                  ? "border-primary-600 bg-primary-50 text-primary-900 font-bold ring-1 ring-primary-500"
-                  : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
-              )}
-            >
-              <Map className="w-4 h-4 shrink-0 text-primary-700 stroke-[2]" aria-hidden="true" />
-              <span>{labels.kavlingOnly}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setFormData((prev) => ({ ...prev, propertyType: "kavling-building" }))}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-lg border p-3 text-left text-xs transition-all cursor-pointer min-h-[44px]",
-                formData.propertyType === "kavling-building"
-                  ? "border-primary-600 bg-primary-50 text-primary-900 font-bold ring-1 ring-primary-500"
-                  : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
-              )}
-            >
-              <Home className="w-4 h-4 shrink-0 text-primary-700 stroke-[2]" aria-hidden="true" />
-              <span>{labels.kavlingBuilding}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setFormData((prev) => ({ ...prev, propertyType: "undecided" }))}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-lg border p-3 text-left text-xs transition-all cursor-pointer min-h-[44px]",
-                formData.propertyType === "undecided"
-                  ? "border-primary-600 bg-primary-50 text-primary-900 font-bold ring-1 ring-primary-500"
-                  : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
-              )}
-            >
-              <HelpCircle className="w-4 h-4 shrink-0 text-primary-700 stroke-[2]" aria-hidden="true" />
-              <span>{labels.propertyUndecided}</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, propertyType: "kavling-building" }))}
+                aria-pressed={formData.propertyType === "kavling-building"}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-lg border p-3 text-left text-xs transition-all cursor-pointer min-h-[44px]",
+                  formData.propertyType === "kavling-building"
+                    ? "border-primary-600 bg-primary-50 text-primary-900 font-bold ring-1 ring-primary-500"
+                    : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
+                )}
+              >
+                <Home className="w-4 h-4 shrink-0 text-primary-700 stroke-[2]" aria-hidden="true" />
+                <span>{labels.kavlingBuilding}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, propertyType: "undecided" }))}
+                aria-pressed={formData.propertyType === "undecided"}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-lg border p-3 text-left text-xs transition-all cursor-pointer min-h-[44px]",
+                  formData.propertyType === "undecided"
+                    ? "border-primary-600 bg-primary-50 text-primary-900 font-bold ring-1 ring-primary-500"
+                    : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
+                )}
+              >
+                <HelpCircle className="w-4 h-4 shrink-0 text-primary-700 stroke-[2]" aria-hidden="true" />
+                <span>{labels.propertyUndecided}</span>
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Pilihan Kode Kavling (Hanya relevan jika Dehir dipilih atau konsultasi umum) */}
-        {formData.projectId === "dehir" ? (
+          {/* Kode Kavling — only for Dehir */}
           <div>
             <label htmlFor="kavlingCode" className="text-xs font-semibold text-neutral-700 block mb-1">
               {labels.kavlingCodeLabel}
@@ -439,14 +634,14 @@ function InterestFormContent({
             <div className="max-w-xs">
               <select
                 id="kavlingCode"
-                value={formData.kavlingCode || ""}
+                value={formData.kavlingCode ?? ""}
                 onChange={(e) => setFormData((prev) => ({ ...prev, kavlingCode: e.target.value }))}
                 className="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-sm text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 min-h-[44px]"
               >
                 <option value="">{labels.kavlingCodePlaceholder}</option>
                 {availableUnitCodes.map((code) => (
                   <option key={code} value={code}>
-                    Kavling {code}
+                    {isEn ? `Plot ${code}` : `Kavling ${code}`}
                   </option>
                 ))}
               </select>
@@ -456,119 +651,132 @@ function InterestFormContent({
               <span>{labels.kavlingCodeNote}</span>
             </p>
           </div>
-        ) : formData.projectId === "pabuaran" ? (
-          <div className="flex items-start gap-2 rounded-lg bg-neutral-50 border border-neutral-200 p-3 text-xs text-neutral-600">
-            <Info className="w-4 h-4 shrink-0 text-neutral-500 mt-0.5" aria-hidden="true" />
-            <span>
-              {locale === "en"
-                ? "Plot data for Celestia Jatiranggon (Pabuaran) is currently in the master plan preparation phase and has not been published yet."
-                : "Data kavling untuk proyek Celestia Jatiranggon (Pabuaran) sedang dalam tahap persiapan master plan dan belum dipublikasikan."}
-            </span>
-          </div>
-        ) : null}
 
-        {/* Visual Cards Tipe Bangunan jika memilih Kavling + Bangunan */}
-        {formData.propertyType === "kavling-building" && (
-          <div className="space-y-3 pt-2 border-t border-neutral-200/80 animate-fade-in">
-            <label className="text-xs font-semibold text-neutral-700 block">
-              {labels.buildingTypeLabel}
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {/* Type 1 Lantai */}
-              <button
-                type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, buildingType: "type-1" }))}
-                className={cn(
-                  "flex flex-col text-left rounded-xl border p-4 transition-all cursor-pointer",
-                  formData.buildingType === "type-1"
-                    ? "border-primary-600 bg-primary-50/50 shadow-xs ring-1 ring-primary-500"
-                    : "border-neutral-200 bg-neutral-50/40 hover:border-neutral-300"
-                )}
-              >
-                <span className="font-bold text-xs text-neutral-900">
-                  {labels.type1Lantai}
-                </span>
-                <span className="text-[11px] text-neutral-500 mt-1">
-                  {locale === "en"
-                    ? "Building Area: 46 m² • 3 Beds, 1 Bath, Carport"
-                    : "Luas Bangunan: 46 m² • 3KT, 1KM, Carport"}
-                </span>
-              </button>
+          {/* Tipe Bangunan — only when kavling-building selected */}
+          {formData.propertyType === "kavling-building" && (
+            <div className="space-y-3 pt-2 border-t border-neutral-200/80 animate-fade-in">
+              <label className="text-xs font-semibold text-neutral-700 block">
+                {labels.buildingTypeLabel}
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, buildingType: "type-1" }))}
+                  aria-pressed={formData.buildingType === "type-1"}
+                  className={cn(
+                    "flex flex-col text-left rounded-xl border p-4 transition-all cursor-pointer",
+                    formData.buildingType === "type-1"
+                      ? "border-primary-600 bg-primary-50/50 shadow-xs ring-1 ring-primary-500"
+                      : "border-neutral-200 bg-neutral-50/40 hover:border-neutral-300"
+                  )}
+                >
+                  <span className="font-bold text-xs text-neutral-900">{labels.type1Lantai}</span>
+                  <span className="text-[11px] text-neutral-500 mt-1">
+                    {isEn ? "Building Area: 46 m² • 3 Beds, 1 Bath, Carport" : "Luas Bangunan: 46 m² • 3KT, 1KM, Carport"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, buildingType: "type-1-promo" }))}
+                  aria-pressed={formData.buildingType === "type-1-promo"}
+                  className={cn(
+                    "flex flex-col text-left rounded-xl border p-4 transition-all cursor-pointer",
+                    formData.buildingType === "type-1-promo"
+                      ? "border-primary-600 bg-primary-50/50 shadow-xs ring-1 ring-primary-500"
+                      : "border-neutral-200 bg-neutral-50/40 hover:border-neutral-300"
+                  )}
+                >
+                  <span className="font-bold text-xs text-neutral-900">{labels.type1LantaiPromo}</span>
+                  <span className="text-[11px] text-neutral-500 mt-1">
+                    {isEn ? "Building Area: 30 m² • 2 Beds, 1 Bath, Multifunction Room" : "Luas Bangunan: 30 m² • 2KT, 1KM, Ruang Multifungsi"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, buildingType: "undecided" }))}
+                  aria-pressed={formData.buildingType === "undecided"}
+                  className={cn(
+                    "flex flex-col text-left rounded-xl border p-4 transition-all cursor-pointer",
+                    formData.buildingType === "undecided"
+                      ? "border-primary-600 bg-primary-50/50 shadow-xs ring-1 ring-primary-500"
+                      : "border-neutral-200 bg-neutral-50/40 hover:border-neutral-300"
+                  )}
+                >
+                  <span className="font-bold text-xs text-neutral-900">{labels.undecided}</span>
+                  <span className="text-[11px] text-neutral-500 mt-1">
+                    {isEn ? "Architectural layout customization consultation" : "Konsultasi penyesuaian denah arsitektur dengan arsitek"}
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
-              {/* Type 1 Lantai Promo */}
-              <button
-                type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, buildingType: "type-1-promo" }))}
-                className={cn(
-                  "flex flex-col text-left rounded-xl border p-4 transition-all cursor-pointer",
-                  formData.buildingType === "type-1-promo"
-                    ? "border-primary-600 bg-primary-50/50 shadow-xs ring-1 ring-primary-500"
-                    : "border-neutral-200 bg-neutral-50/40 hover:border-neutral-300"
-                )}
-              >
-                <span className="font-bold text-xs text-neutral-900">
-                  {labels.type1LantaiPromo}
-                </span>
-                <span className="text-[11px] text-neutral-500 mt-1">
-                  {locale === "en"
-                    ? "Building Area: 30 m² • 2 Beds, 1 Bath, Multifunction Room"
-                    : "Luas Bangunan: 30 m² • 2KT, 1KM, Ruang Multifungsi"}
-                </span>
-              </button>
-
-              {/* Undecided / Custom */}
-              <button
-                type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, buildingType: "undecided" }))}
-                className={cn(
-                  "flex flex-col text-left rounded-xl border p-4 transition-all cursor-pointer",
-                  formData.buildingType === "undecided"
-                    ? "border-primary-600 bg-primary-50/50 shadow-xs ring-1 ring-primary-500"
-                    : "border-neutral-200 bg-neutral-50/40 hover:border-neutral-300"
-                )}
-              >
-                <span className="font-bold text-xs text-neutral-900">
-                  {labels.undecided}
-                </span>
-                <span className="text-[11px] text-neutral-500 mt-1">
-                  {locale === "en"
-                    ? "Architectural layout customization consultation with an architect"
-                    : "Konsultasi penyesuaian denah arsitektur dengan arsitek"}
-                </span>
-              </button>
+      {/* ── P0-03: General consultation notice (no property prefs shown) ─── */}
+      {isGeneral && (
+        <section className="rounded-2xl border border-neutral-200 bg-primary-50/40 p-6 sm:p-7 shadow-xs">
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-primary-100/80 p-2 text-primary-800 shrink-0">
+              <Sparkles className="w-5 h-5 stroke-[2]" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-neutral-900">
+                {isEn ? "General Consultation" : "Konsultasi Umum"}
+              </p>
+              <p className="text-xs text-neutral-600 mt-0.5 leading-relaxed">
+                {labels.generalConsultationNote}
+              </p>
             </div>
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
-      {/* 4. Detail Pertanyaan & Catatan Bebas */}
+      {/* ── 4. Detail & Identitas (P0-06) ───────────────────────────────────── */}
       <section className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
         <div>
           <h2 className="text-base font-bold text-neutral-900 block">
             {labels.clientDetailsTitle}
           </h2>
           <p className="text-xs text-neutral-500 mt-0.5">
-            {locale === "en"
+            {isEn
               ? "Share your questions, estimated site visit schedule, or any custom notes."
               : "Sampaikan pertanyaan, estimasi waktu survei lokasi, atau catatan bebas Anda."}
           </p>
         </div>
 
+        {/* Name — required (P0-06) */}
         <div className="max-w-md">
           <label htmlFor="name" className="text-xs font-semibold text-neutral-700 block mb-1">
-            {labels.name}
+            {labels.name} <span className="text-red-600 ml-0.5" aria-label={isEn ? "required" : "wajib diisi"}>*</span>
           </label>
           <input
             type="text"
             id="name"
+            required
             maxLength={100}
-            value={formData.name || ""}
-            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+            value={formData.name ?? ""}
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, name: e.target.value }));
+              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+            }}
             placeholder={labels.namePlaceholder}
-            className="w-full rounded-lg border border-neutral-300 px-3.5 py-2 text-sm text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 min-h-[44px]"
+            aria-describedby={errors.name ? "name-error" : undefined}
+            aria-invalid={!!errors.name}
+            className={cn(
+              "w-full rounded-lg border px-3.5 py-2 text-sm text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 min-h-[44px]",
+              errors.name ? "border-red-400 bg-red-50/40" : "border-neutral-300"
+            )}
           />
+          {errors.name && (
+            <p id="name-error" role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs text-red-700">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{errors.name}</span>
+            </p>
+          )}
         </div>
 
+        {/* Notes — optional, max 1000 */}
         <div>
           <label htmlFor="notes" className="text-xs font-semibold text-neutral-700 block mb-1">
             {labels.notes}
@@ -577,15 +785,18 @@ function InterestFormContent({
             id="notes"
             rows={4}
             maxLength={1000}
-            value={formData.notes || ""}
+            value={formData.notes ?? ""}
             onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
             placeholder={labels.notesPlaceholder}
             className="w-full rounded-lg border border-neutral-300 px-3.5 py-2.5 text-sm text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           />
+          <p className="mt-1 text-[11px] text-neutral-400 text-right">
+            {(formData.notes ?? "").length}/1000
+          </p>
         </div>
       </section>
 
-      {/* 5. Submit CTA & Direct WhatsApp Button */}
+      {/* ── 5. Submit CTA ────────────────────────────────────────────────────── */}
       <div className="rounded-2xl border border-neutral-200 bg-neutral-50/80 p-6 sm:p-7 space-y-4">
         <p className="text-xs text-neutral-500 leading-relaxed">
           {labels.clientNotice}
@@ -623,16 +834,16 @@ function InterestFormContent({
           </WhatsAppButton>
         </div>
 
-        {/* Fallback akses WhatsApp jika popup blocker aktif */}
+        {/* Fallback link if popup blocked */}
         {submittedUrl && (
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-4 text-xs text-primary-950 animate-fade-in space-y-1.5">
             <p className="font-semibold text-primary-900">
-              {locale === "en" ? "Opening WhatsApp..." : "Membuka WhatsApp..."}
+              {isEn ? "Opening WhatsApp..." : "Membuka WhatsApp..."}
             </p>
             <p className="text-primary-800 leading-relaxed">
-              {locale === "en"
-                ? "If WhatsApp did not launch automatically, click the link below to open it directly:"
-                : "Jika WhatsApp tidak terbuka secara otomatis, klik tautan di bawah ini untuk membukanya secara manual:"}
+              {isEn
+                ? "If WhatsApp did not launch automatically, click the link below:"
+                : "Jika WhatsApp tidak terbuka secara otomatis, klik tautan di bawah ini:"}
             </p>
             <a
               href={submittedUrl}
@@ -640,7 +851,7 @@ function InterestFormContent({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 font-bold text-whatsapp-text underline hover:text-emerald-900 pt-1"
             >
-              <span>{locale === "en" ? "Open WhatsApp Manually" : "Buka WhatsApp Secara Manual"}</span>
+              <span>{isEn ? "Open WhatsApp Manually" : "Buka WhatsApp Secara Manual"}</span>
               <ExternalLink className="w-3.5 h-3.5 stroke-[2]" aria-hidden="true" />
             </a>
           </div>
@@ -652,8 +863,8 @@ function InterestFormContent({
 
 function SuspendedInterestForm(props: InterestFormProps) {
   const searchParams = useSearchParams();
-  const paramProject = searchParams.get("project")?.toLowerCase() || "";
-  const paramUnit = searchParams.get("unit")?.toUpperCase() || "";
+  const paramProject = searchParams.get("project")?.toLowerCase() ?? "";
+  const paramUnit = searchParams.get("unit")?.toUpperCase() ?? "";
   const paramKey = `${paramProject}-${paramUnit}`;
 
   return (
@@ -667,14 +878,14 @@ function SuspendedInterestForm(props: InterestFormProps) {
 }
 
 /**
- * InterestForm dengan boundary Suspense aman untuk Static Site Generation (SSG).
+ * InterestForm — boundary Suspense aman untuk SSG/Static Export.
  */
 export function InterestForm(props: InterestFormProps) {
   return (
     <Suspense
       fallback={
         <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center text-sm text-neutral-500">
-          Memuat formulir minat & konsultasi...
+          {props.locale === "en" ? "Loading consultation form..." : "Memuat formulir minat & konsultasi..."}
         </div>
       }
     >

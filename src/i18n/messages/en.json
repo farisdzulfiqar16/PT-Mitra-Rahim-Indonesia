@@ -149,7 +149,15 @@
     "notesPlaceholder": "Write your specific questions, preferred survey schedule, or any details you need...",
     "submitViaWhatsApp": "Send Consultation via WhatsApp",
     "directWhatsApp": "Contact Directly via WA",
-    "clientNotice": "This form is intended for initial consultation with no charges involved. It does not constitute a booking, reservation, or transaction confirmation."
+    "clientNotice": "This form is intended for initial consultation with no charges involved. It does not constitute a booking, reservation, or transaction confirmation.",
+    "nameRequired": "Name is required before submitting.",
+    "nameTooLong": "Name must not exceed 100 characters.",
+    "topicLimitReached": "You can select up to 3 topics at a time.",
+    "topicRequiredForDehir": "Please select at least one consultation topic.",
+    "pabuaranLocked": "This project is still in the preparation phase and is not yet open for active project consultations.",
+    "generalConsultationNote": "Share your general questions about property, location, or budget. Our marketing team is ready to help.",
+    "name": "Your Name",
+    "namePlaceholderRequired": "Your name (required)"
   },
   "contactPage": {
     "title": "Contact Us",
