@@ -60,9 +60,9 @@ Sebelum menyusun rencana implementasi, baca dokumentasi berikut:
 3. `docs/ARCHITECTURE.md`
 4. `docs/TECH-DECISIONS.md`
 5. `docs/PROJECT-STRUCTURE.md`
-6. `docs/celestia-existing-implementation-audit.md`
-7. `docs/celestia-batch-3-proposal.md`
-8. `docs/celestia-cleanup-proposal.md`
+6. `docs/reports/celestia-existing-implementation-audit.md`
+7. `docs/proposals/celestia-batch-3-proposal.md`
+8. `docs/proposals/celestia-cleanup-proposal.md`
 9. Dokumen requirement, daftar task, spesifikasi, dan timeline proyek yang sudah tersedia.
 
 Periksa juga source code yang relevan dengan pekerjaan yang sedang dilakukan.
@@ -299,7 +299,7 @@ Sebelum mengimplementasikan fitur baru:
 
 1. Periksa Git status dan branch saat ini.
 2. Baca dokumentasi proyek yang disebutkan sebelumnya.
-3. Baca `docs/celestia-batch-3-proposal.md`.
+3. Baca `docs/proposals/celestia-batch-3-proposal.md`.
 4. Periksa task list dan timeline proyek.
 5. Periksa inventaris aset dan referensinya.
 6. Identifikasi rekomendasi Batch 3 yang aman dan murni bersifat teknis.
