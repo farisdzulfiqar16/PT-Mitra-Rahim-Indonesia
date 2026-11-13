@@ -320,4 +320,4 @@ Untuk aktivasi production:
 4. **Gunakan `@/` untuk import** — bukan path relatif panjang
 5. **Jangan ubah `tsconfig.json`** — sudah dikonfigurasi dengan benar
 6. **Jalankan `npx tsc --noEmit` sebelum commit** — cegah error TypeScript masuk ke repo
-7. **Lihat `docs/celestia-existing-implementation-audit.md`** — laporan kondisi aktual proyek secara lengkap
+7. **Lihat `docs/reports/celestia-existing-implementation-audit.md`** — laporan kondisi aktual proyek secara lengkap

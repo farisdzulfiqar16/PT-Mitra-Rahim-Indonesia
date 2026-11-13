@@ -573,8 +573,8 @@ Files to update after V1 implementation:
 | `docs/DEPLOYMENT-CHECKLIST.md` | New file — deployment checklist |
 
 The following historical documents must NOT be deleted or modified:
-`docs/consultation/`, `docs/celestia-batch-3-proposal.md`, `docs/celestia-cleanup-proposal.md`,
-`docs/celestia-existing-implementation-audit.md`, `docs/celestia-architecture-docs-proposal.md`.
+`docs/consultation/`, `docs/proposals/celestia-batch-3-proposal.md`, `docs/proposals/celestia-cleanup-proposal.md`,
+`docs/reports/celestia-existing-implementation-audit.md`, `docs/proposals/celestia-architecture-docs-proposal.md`.
 
 ---
 
